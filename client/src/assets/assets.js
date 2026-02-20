@@ -12,6 +12,7 @@ import PlaceHolderProductImage2 from "./PlaceHolderProductImage2.jpg"
 import ProfileIcon from "./ProfileIcon.png"
 import MenuIcon from "./MenuIcon.png"
 import BackIcon from "./BackIcon.jpg"
+import HeroImage from "./HeroImage.png"
 
 
 
@@ -30,5 +31,6 @@ export const assets = {
     ProfileIcon,
     MenuIcon,
     BackIcon,
+    HeroImage,
 
 }
