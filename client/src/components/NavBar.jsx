@@ -8,7 +8,9 @@ const NavBar = () => {
   const [visible,setVisible] = useState(false);
   return (
     <div className='flex items-center justify-between py-5 font-medium border-b-2 bg-white'>
-      <img src={assets.Logo2} className='w-36' alt="Logo" />
+      <Link to='/'>
+        <img src={assets.Logo2} className='w-36' alt="Logo" />
+      </Link>
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
         <NavLink to='/' className='flex flex-col items-center gap-1'>
           <p className='hover:text-black'>Home</p>
@@ -41,9 +43,9 @@ const NavBar = () => {
         </div>
         <Link to='/cart' className='relative'>
           <img src={assets.CartIcon} alt='search icon' className='w-6 cursor-pointer' />
-          <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>1</p>
+          <p className='absolute -right-1.25 -bottom-1.25 w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>1</p>
         </Link>
-        <img onClick={()=>setVisible(true)} src={assets.MenuIcon} className='w-6 cursor-pointer sm:hidden' />
+        <img onClick={()=>setVisible(true)} src={assets.MenuIcon} className='w-6 cursor-pointer sm:hidden' alt='menu' />
       </div>
     {/*  Sidebar Menu for small screens*/}
       <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'}`}>
