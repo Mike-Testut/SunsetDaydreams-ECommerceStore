@@ -1,14 +1,12 @@
 import React from 'react'
-import {assets} from "../assets/assets.js";
-import NavBar from '../components/NavBar'
+import Hero from "../components/Hero.jsx";
 
 
 
 const Home = () => {
   return (
     <div>
-      Home
-        <img src={assets.PlaceHolderImage} alt="PlaceHolder" />
+      <Hero />
     </div>
 
   )
