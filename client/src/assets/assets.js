@@ -3,6 +3,7 @@ import SearchIcon from "./SearchIcon.png"
 import BananaLeafBG from "./BananaLeafBG.png"
 import Logo from "./Logo.png"
 import Logo2 from "./Logo2.png"
+import LogoBlackOutline from "./LogoBlackOutline.png"
 import PageBG from "./PageBG.png"
 import CartIcon from "./CartIcon.png"
 import SDLogo from "./SDLogo.png"
@@ -22,6 +23,7 @@ export const assets = {
     BananaLeafBG,
     Logo,
     Logo2,
+    LogoBlackOutline,
     PageBG,
     CartIcon,
     SDLogo,
