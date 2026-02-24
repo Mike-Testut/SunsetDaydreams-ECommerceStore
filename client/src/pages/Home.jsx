@@ -1,6 +1,7 @@
 import React from 'react'
 import Hero from "../components/Hero.jsx";
 import NewArrivals from "../components/NewArrivals.jsx";
+import BestSellers from "../components/BestSellers.jsx";
 
 
 
@@ -9,6 +10,7 @@ const Home = () => {
     <div>
       <Hero />
       <NewArrivals />
+      <BestSellers />
     </div>
 
   )
