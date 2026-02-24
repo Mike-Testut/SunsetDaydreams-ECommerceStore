@@ -3,6 +3,7 @@ import {Route, Routes} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import NavBar from "./components/NavBar.jsx";
 import Cart from "./pages/Cart.jsx";
+import Footer from "./components/Footer.jsx";
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/cart" element={<Cart />} />
             </Routes>
+            <Footer />
         </div>
     )
 }

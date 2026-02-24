@@ -10,7 +10,7 @@ const BestSellers = () => {
     useEffect(() => {
         const bestProducts = MockProducts.filter((item)=>(item.bestseller));
         setBestSellers(bestProducts.slice(0,5));
-    })
+    },[])
 
     return (
         <div className="my-10">
