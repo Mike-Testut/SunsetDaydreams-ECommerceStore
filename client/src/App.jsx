@@ -4,6 +4,7 @@ import Home from "./pages/Home.jsx";
 import NavBar from "./components/NavBar.jsx";
 import Cart from "./pages/Cart.jsx";
 import Footer from "./components/Footer.jsx";
+import Collection from "./pages/Collection.jsx";
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/clothing/:category" element={<Collection/>} />
             </Routes>
             <Footer />
         </div>
