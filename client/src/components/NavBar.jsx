@@ -16,11 +16,11 @@ const NavBar = () => {
           <p className='hover:text-black'>Home</p>
           <hr className='w-3/4 border-none h-[1.5px] bg-gray-700 hidden'></hr>
         </NavLink>
-        <NavLink to='/mens' className='flex flex-col items-center gap-1'>
+        <NavLink to='/clothing/mens' className='flex flex-col items-center gap-1'>
           <p className='hover:text-black'>Mens</p>
           <hr className='w-3/4 border-none h-[1.5px] bg-gray-700 hidden'></hr>
         </NavLink>
-        <NavLink to='/womens' className='flex flex-col items-center gap-1'>
+        <NavLink to='/clothing/womens' className='flex flex-col items-center gap-1'>
           <p className='hover:text-black'>Womens</p>
           <hr className='w-3/4 border-none h-[1.5px] bg-gray-700 hidden' ></hr>
         </NavLink>
@@ -55,8 +55,8 @@ const NavBar = () => {
             <p>Back</p>
           </div>
           <NavLink onClick={()=>setVisible(false)} to='/' className='py-2 pl-6 border'>Home</NavLink>
-          <NavLink onClick={()=>setVisible(false)} to='/mens' className='py-2 pl-6 border'>Mens</NavLink>
-          <NavLink onClick={()=>setVisible(false)} to='/womens' className='py-2 pl-6 border'>Womens</NavLink>
+          <NavLink onClick={()=>setVisible(false)} to='/clothing/mens' className='py-2 pl-6 border'>Mens</NavLink>
+          <NavLink onClick={()=>setVisible(false)} to='/clothing/womens' className='py-2 pl-6 border'>Womens</NavLink>
           <NavLink onClick={()=>setVisible(false)} to='/sale' className='py-2 pl-6 border'>Sale</NavLink>
         </div>
       </div>

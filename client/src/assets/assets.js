@@ -14,6 +14,7 @@ import ProfileIcon from "./ProfileIcon.png"
 import MenuIcon from "./MenuIcon.png"
 import BackIcon from "./BackIcon.jpg"
 import HeroImage from "./HeroImage.png"
+import dropdown_icon from "./dropdown_icon.png"
 
 
 
@@ -34,5 +35,6 @@ export const assets = {
     MenuIcon,
     BackIcon,
     HeroImage,
+    dropdown_icon,
 
 }
