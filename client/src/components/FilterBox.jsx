@@ -7,7 +7,7 @@ const FilterBox = () => {
     return (
         <div>
             <div className="min-w-60">
-                <p className='my-2 text-xl flex items-center cursor-pointer gap-2'>
+                <p onClick={()=>setShowFilters(!showFilters)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>
                     FILTERS
                     <img className={`h-3 ${showFilters ? 'rotate-90': ''}`} src={assets.dropdown_icon} alt=""  />
                 </p>
