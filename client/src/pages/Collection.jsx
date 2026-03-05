@@ -27,6 +27,9 @@ const Collection = () => {
         if(category.length>0){
             products = products.filter(item=>category == item.category)
         }
+        if(subcategory.length>0){
+            products = products.filter(item=>subcategory.includes(item.subCategory));
+        }
         setFilterProducts(products);
     }
 
@@ -53,11 +56,14 @@ const Collection = () => {
                     </select>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 py-5">
-                    {
+
+                    {filterProducts.length > 0 ?
                         filterProducts.map((product,index) => (
                             <ProductPreview key={index} id={product._id} name={product.name} price={product.price} image={product.image} />
-                        ))
+                        )) :
+                        <p>Sorry no products found matching your criteria</p>
                     }
+
 
                 </div>
             </div>
