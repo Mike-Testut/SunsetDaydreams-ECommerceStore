@@ -1,8 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {assets} from "../assets/assets.js";
 
-const FilterBox = () => {
+const FilterBox = (props) => {
     const [showFilters, setShowFilters] = useState(false);
+
+
+
 
     return (
         <div>
@@ -15,16 +18,16 @@ const FilterBox = () => {
                     <p className="mb-3 text-sm font-medium">TYPE</p>
                     <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
                         <p className='flex gap-2'>
-                            <input className='w-3' type='checkbox' value={'Shirts'} />Shirts
+                            <input className='w-3' type='checkbox' value={'Shirts'} onChange={props.handleToggle}/>Shirts
                         </p>
                         <p className='flex gap-2'>
-                            <input className='w-3' type='checkbox' value={'Sweaters & Sweatshirts'} />Sweaters & Sweatshirts
+                            <input className='w-3' type='checkbox' value={'Sweaters & Sweatshirts'} onChange={props.handleToggle} />Sweaters & Sweatshirts
                         </p>
                         <p className='flex gap-2'>
-                            <input className='w-3' type='checkbox' value={'Outerwear'} />Outerwear
+                            <input className='w-3' type='checkbox' value={'Outerwear'} onChange={props.handleToggle}/>Outerwear
                         </p>
                         <p className='flex gap-2'>
-                            <input className='w-3' type='checkbox' value={'Swim'} />Swim
+                            <input className='w-3' type='checkbox' value={'Swim'} onChange={props.handleToggle} />Swim
                         </p>
                     </div>
                 </div>
@@ -50,3 +53,4 @@ const FilterBox = () => {
     )
 }
 export default FilterBox
+
