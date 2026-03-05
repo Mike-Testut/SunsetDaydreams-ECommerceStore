@@ -22,13 +22,22 @@ const Collection = () => {
 
     }
 
+    const applyFilter = () => {
+        let products = MockProducts.slice()
+        if(category.length>0){
+            products = products.filter(item=>category == item.category)
+        }
+        setFilterProducts(products);
+    }
+
     useEffect(() => {
         setFilterProducts(MockProducts);
     },[])
 
     useEffect(() => {
-        console.log(subcategory)
-    },[subcategory])
+        applyFilter();
+    },[category,subcategory]);
+
 
     return (
         <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10">
