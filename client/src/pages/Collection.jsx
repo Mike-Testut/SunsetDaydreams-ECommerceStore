@@ -10,15 +10,29 @@ const Collection = () => {
     const {category} = useParams();
     const { MockProducts } = use(ShopContext);
     const [filterProducts, setFilterProducts] = useState([]);
+
     const [subcategory, setSubcategory] = useState([]);
+
+    const toggleSubcategory = (e) => {
+        if(subcategory.includes(e.target.value)) {
+            setSubcategory(prev=>prev.filter(item=>item !== e.target.value));
+        } else {
+            setSubcategory(prev => [...prev, e.target.value]);
+        }
+
+    }
 
     useEffect(() => {
         setFilterProducts(MockProducts);
     },[])
 
+    useEffect(() => {
+        console.log(subcategory)
+    },[subcategory])
+
     return (
         <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10">
-            <FilterBox />
+            <FilterBox handleToggle={toggleSubcategory} />
             <div className="flex-1">
                 <div className="flex justify-between text-base sm:text-2xl mb-4">
                     <Title text2={`${category.toUpperCase()}`} />
