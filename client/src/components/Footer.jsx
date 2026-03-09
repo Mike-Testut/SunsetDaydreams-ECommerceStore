@@ -39,7 +39,11 @@ const Footer = () => {
             </div>
             <div>
                 <hr />
-                <p className='py-5 text-sm text-center'>Copyright 2026 Sunset Daydreams Co.</p>
+                <div className='flex items-center justify-center'>
+                    <p className='py-5 text-sm text-center'>Copyright 2026 Sunset Daydreams Co.</p>
+                    <img className='w-4 ml-2' src={assets.favicon}/>
+                </div>
+
             </div>
         </div>
     )
