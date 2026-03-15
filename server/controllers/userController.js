@@ -8,7 +8,23 @@ const createToken = (id)=>{
 }
 
 const loginUser = async (req, res) => {
-
+    try {
+        const {email, password} = req.body;
+        const user = await userModel.findOne({email});
+        if (!user) {
+            return res.json({success: false, error: "User does not exist"});
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if(passwordMatch){
+            const token = createToken(user._id);
+            res.json({success: true, token});
+        } else {
+            res.json({success: false, error: "Password is incorrect"});
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({success: false, error: error.message});
+    }
 }
 
 const registerUser = async (req, res) => {
