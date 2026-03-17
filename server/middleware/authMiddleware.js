@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-export const protect = (req, res, next) => {
+const protect = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if(!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({success:false, error: "No token"});
@@ -17,3 +17,5 @@ export const protect = (req, res, next) => {
         return res.status(401).json({ success: false, error: "Invalid token" });
     }
 }
+
+export default protect;
