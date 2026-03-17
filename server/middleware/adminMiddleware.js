@@ -1,4 +1,4 @@
-export const adminOnly = (req, res, next) => {
+const adminOnly = (req, res, next) => {
     if (!req.user) {
         return res.status(401).json({ success: false, error: "Not authenticated" });
     }
@@ -9,3 +9,5 @@ export const adminOnly = (req, res, next) => {
 
     next();
 };
+
+export default adminOnly
