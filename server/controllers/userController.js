@@ -3,8 +3,15 @@ import validator from "validator"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const createToken = (id)=>{
-    return jwt.sign({id}, process.env.JWT_SECRET);
+const createToken = (user)=>{
+    return jwt.sign(
+        {
+            id: user._id,
+            role: user.role
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+    );
 }
 
 const loginUser = async (req, res) => {
@@ -16,8 +23,17 @@ const loginUser = async (req, res) => {
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if(passwordMatch){
-            const token = createToken(user._id);
-            res.json({success: true, token});
+            const token = createToken(user);
+            return res.status(200).json({
+                success: true,
+                token,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+            });
         } else {
             res.json({success: false, error: "Password is incorrect"});
         }
@@ -50,9 +66,17 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         //create new user
-        const newUser = new userModel({name, email, password:hashedPassword});
+            //set admin role if first registered user
+        const userCount = await userModel.countDocuments();
+        const role = userCount === 0 ? "admin" : "user";
+
+        const newUser = new userModel({
+            name,
+            email,
+            password:hashedPassword,
+            role});
         const user = await newUser.save()
-        const token = createToken(user._id);
+        const token = createToken(user);
         res.json({success: true, token})
     } catch (error) {
         console.log("something went wrong", error)
@@ -60,8 +84,5 @@ const registerUser = async (req, res) => {
     }
 }
 
-const adminLogin = async (req, res) => {
 
-}
-
-export {loginUser, registerUser, adminLogin};
+export {loginUser, registerUser};
