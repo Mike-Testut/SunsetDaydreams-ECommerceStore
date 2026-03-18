@@ -6,7 +6,7 @@ import adminOnly from "../middleware/adminMiddleware.js";
 
 const productRouter = express.Router();
 
-productRouter.post("/add",upload.array("images",5), protect, adminOnly, addProduct);
+productRouter.post("/add", protect, adminOnly, upload.array("images",5), addProduct);
 productRouter.get("/all", listProducts);
 productRouter.post("/remove/:id",protect, adminOnly, removeProduct);
 productRouter.post("/:id", viewSingleProduct);
