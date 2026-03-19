@@ -1,16 +1,16 @@
-import React, {use, useEffect, useState} from 'react'
-import {ShopContext} from "../context/ShopContext.jsx";
+import React, { useEffect, useState} from 'react'
 import Title from "./Title.jsx";
 import ProductPreview from "./ProductPreview.jsx";
+import {useSelector} from "react-redux";
 
 const BestSellers = () => {
-    const {MockProducts} = use(ShopContext);
+    const products = useSelector((state) => state.shop.products);
     const [bestSellers, setBestSellers] = useState([]);
 
     useEffect(() => {
-        const bestProducts = MockProducts.filter((item)=>(item.bestseller));
+        const bestProducts = products.filter((item)=>(item.bestseller));
         setBestSellers(bestProducts.slice(0,5));
-    },[])
+    },[products])
 
     return (
         <div className="my-10">

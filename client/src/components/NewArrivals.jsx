@@ -1,15 +1,15 @@
-import React, {use, useEffect, useState} from 'react'
-import {ShopContext} from "../context/ShopContext.jsx";
+import React, { useEffect, useState} from 'react'
 import ProductPreview from "./ProductPreview.jsx";
 import Title from "./Title.jsx";
+import {useSelector} from "react-redux";
 
 const NewArrivals = () => {
-    const { MockProducts } = use(ShopContext);
+    const products = useSelector((state) => state.shop.products)
     const [latestProducts, setLatestProducts] = useState([]);
     useEffect(() => {
-        setLatestProducts(MockProducts.slice(0,10));
-    },[])
-    // console.log(MockProducts);
+        setLatestProducts(products.slice(0,10));
+    },[products])
+
     return (
         <div className='my-10'>
             <div className='text-center py-8 text-3xl'>
