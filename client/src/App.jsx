@@ -8,6 +8,7 @@ import AddProduct from "./admin/adminPages/addProduct.jsx";
 import StoreLayout from "./layouts/storeLayout.jsx";
 import AdminLayout from "./admin/adminLayouts/adminLayout.jsx";
 import SearchResults from "./pages/SearchResults.jsx";
+import Product from "./pages/Product.jsx";
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
                     <Route path="/cart" element={<Cart/>} />
                     <Route path="/clothing/:category" element={<Collection/>} />
                     <Route path="/search" element={<SearchResults/>}/>
+                    <Route path="/products/:productId" element={<Product/>}/>
                 </Route>
 
                 {/*Admin Routes*/}
