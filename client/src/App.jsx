@@ -9,6 +9,7 @@ import StoreLayout from "./layouts/storeLayout.jsx";
 import AdminLayout from "./admin/adminLayouts/adminLayout.jsx";
 import SearchResults from "./pages/SearchResults.jsx";
 import Product from "./pages/Product.jsx";
+import Checkout from "./pages/Checkout.jsx";
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
                     <Route path="/clothing/:category" element={<Collection/>} />
                     <Route path="/search" element={<SearchResults/>}/>
                     <Route path="/products/:productId" element={<Product/>}/>
+                    <Route path="/checkout" element={<Checkout/>}/>
                 </Route>
 
                 {/*Admin Routes*/}

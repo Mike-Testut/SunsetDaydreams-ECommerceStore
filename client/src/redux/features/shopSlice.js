@@ -38,7 +38,29 @@ const shopSlice = createSlice({
             } else {
                 state.cartItems[productId][size] += 1
             }
-        }
+        },
+        updateCartQuantity: (state, action) => {
+            const {productId, size, quantity} = action.payload
+            if (!state.cartItems[productId]) return
+
+            if (quantity <= 0) {
+                delete state.cartItems[productId][size]
+            }
+            if (Object.keys(state.cartItems[productId]).length === 0) {
+                delete state.cartItems[productId]
+            }
+            state.cartItems[productId][size] = quantity;
+        },
+        removeFromCart: (state, action) => {
+            const {productId, size} = action.payload
+            if (!state.cartItems[productId]?.[size]) return
+
+            delete state.cartItems[productId][size]
+
+            if (Object.keys(state.cartItems[productId]).length === 0) {
+                delete state.cartItems[productId]
+            }
+        },
     }
 })
 
@@ -48,6 +70,8 @@ export const {
     toggleShowSearch,
     clearSearch,
     addToCart,
+    updateCartQuantity,
+    removeFromCart,
 } = shopSlice.actions;
 
 export const selectCartCount = (state) => {
