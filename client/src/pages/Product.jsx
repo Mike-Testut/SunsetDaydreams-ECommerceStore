@@ -96,10 +96,10 @@ const Product = () => {
                                     <button
                                         key={index}
                                         onClick={() => setSelectedSize(item)}
-                                        className={`border py-2 px-4 bg-gray-100 cursor-pointer ${
+                                        className={`border py-2 px-4 bg-gray-100 cursor-pointer ease-in-out ${
                                             selectedSize === item
                                                 ? 'border-orange-500'
-                                                : 'border-gray-200'
+                                                : 'border-gray-200 hover:border-black'
                                         }`}
                                     >
                                         {item}
