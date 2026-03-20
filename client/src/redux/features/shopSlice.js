@@ -26,6 +26,19 @@ const shopSlice = createSlice({
         clearSearch: (state) => {
             state.search = ''
         },
+        addToCart: (state, action) => {
+            const {productId, size} = action.payload;
+            if (!productId || !size) return;
+            if (!state.cartItems[productId]) {
+                state.cartItems[productId] = {}
+            }
+
+            if (!state.cartItems[productId][size]) {
+                state.cartItems[productId][size] = 1
+            } else {
+                state.cartItems[productId][size] += 1
+            }
+        }
     }
 })
 
@@ -34,6 +47,7 @@ export const {
     setShowSearch,
     toggleShowSearch,
     clearSearch,
+    addToCart,
 } = shopSlice.actions;
 
 export default shopSlice.reducer;
