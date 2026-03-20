@@ -8,7 +8,7 @@ export const MockProducts = [
         price: 100,
         image: [assets.PlaceHolderProductImage1],
         category: "womens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L"],
         date: 1716634345448,
         bestseller: true
@@ -20,7 +20,7 @@ export const MockProducts = [
         price: 200,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["M", "L", "XL"],
         date: 1716621345448,
         bestseller: true
@@ -32,7 +32,7 @@ export const MockProducts = [
         price: 110,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "XXL"],
         date: 1716621345448,
         bestseller: true
@@ -44,7 +44,7 @@ export const MockProducts = [
         price: 130,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "womens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["M", "L", "XL"],
         date: 1716622345448,
         bestseller: true
@@ -56,7 +56,7 @@ export const MockProducts = [
         price: 190,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "pants",
+        subcategory: "pants",
         sizes: ["S", "L", "XL"],
         date: 1716621542448,
         bestseller: false
@@ -68,7 +68,7 @@ export const MockProducts = [
         price: 140,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716622345448,
         bestseller: false
@@ -80,7 +80,7 @@ export const MockProducts = [
         price: 110,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "pants",
+        subcategory: "pants",
         sizes: ["S", "L", "XL"],
         date: 1716622235448,
         bestseller: false
@@ -92,7 +92,7 @@ export const MockProducts = [
         price: 120,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L"],
         date: 1716623345448,
         bestseller: false
@@ -104,7 +104,7 @@ export const MockProducts = [
         price: 150,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716624445448,
         bestseller: false
@@ -116,7 +116,7 @@ export const MockProducts = [
         price: 130,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "womens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716625545448,
         bestseller: false
@@ -128,7 +128,7 @@ export const MockProducts = [
         price: 140,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "pants",
+        subcategory: "pants",
         sizes: ["S", "M", "L", "XL"],
         date: 1716627745448,
         bestseller: false
@@ -140,7 +140,7 @@ export const MockProducts = [
         price: 150,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716629945448,
         bestseller: false
@@ -152,7 +152,7 @@ export const MockProducts = [
         price: 190,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "womens",
-        subCategory: "pants",
+        subcategory: "pants",
         sizes: ["S", "M", "L", "XL"],
         date: 1716633245448,
         bestseller: false
@@ -164,7 +164,7 @@ export const MockProducts = [
         price: 260,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716654145448,
         bestseller: false
@@ -176,7 +176,7 @@ export const MockProducts = [
         price: 290,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "sweaters & sweatshirts",
+        subcategory: "sweaters & sweatshirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716655245448,
         bestseller: false
@@ -188,7 +188,7 @@ export const MockProducts = [
         price: 270,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "shirts",
+        subcategory: "shirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716656345448,
         bestseller: false
@@ -200,7 +200,7 @@ export const MockProducts = [
         price: 310,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "womens",
-        subCategory: "sweaters & sweatshirts",
+        subcategory: "sweaters & sweatshirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716659645448,
         bestseller: false
@@ -212,7 +212,7 @@ export const MockProducts = [
         price: 290,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "sweaters & sweatshirts",
+        subcategory: "sweaters & sweatshirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716660745448,
         bestseller: false
@@ -224,7 +224,7 @@ export const MockProducts = [
         price: 320,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "swim",
+        subcategory: "swim",
         sizes: ["S", "M", "L", "XL"],
         date: 1716661845448,
         bestseller: false
@@ -236,7 +236,7 @@ export const MockProducts = [
         price: 330,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "swim",
+        subcategory: "swim",
         sizes: ["S", "M", "L", "XL"],
         date: 1716664045448,
         bestseller: false
@@ -248,7 +248,7 @@ export const MockProducts = [
         price: 320,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "womens",
-        subCategory: "sweaters & sweatshirts",
+        subcategory: "sweaters & sweatshirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716667345448,
         bestseller: false
@@ -260,7 +260,7 @@ export const MockProducts = [
         price: 350,
         image: [assets.PlaceHolderProductImage1,assets.PlaceHolderProductImage2],
         category: "mens",
-        subCategory: "sweaters & sweatshirts",
+        subcategory: "sweaters & sweatshirts",
         sizes: ["S", "M", "L", "XL"],
         date: 1716668445448,
         bestseller: false

@@ -23,6 +23,9 @@ const shopSlice = createSlice({
         toggleShowSearch: (state) => {
             state.showSearch = !state.showSearch
         },
+        clearSearch: (state) => {
+            state.search = ''
+        },
     }
 })
 
@@ -30,6 +33,7 @@ export const {
     setSearch,
     setShowSearch,
     toggleShowSearch,
+    clearSearch,
 } = shopSlice.actions;
 
 export default shopSlice.reducer;

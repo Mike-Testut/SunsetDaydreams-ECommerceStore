@@ -1,7 +1,10 @@
 import React from 'react'
 import {assets} from "../assets/assets.js";
+import {useNavigate} from "react-router-dom";
 
 const Hero = () => {
+    const navigate = useNavigate();
+
     return (
         <div className='flex flex-col sm:flex-row border border-gray-400 mt-10'>
         {/*    Left Side Hero */}
@@ -17,8 +20,8 @@ const Hero = () => {
                         <p className='w-8 md:w-11 h-0.5 bg-[#414141]'></p>
                     </div>
                     <div className='flex flex-row items-center justify-center gap-10'>
-                        <button className='border-2 px-2 py-1 hover:bg-black hover:text-white cursor-pointer'>Men's</button>
-                        <button className='border-2 px-2 py-1 hover:bg-black hover:text-white cursor-pointer'>Women's</button>
+                        <button onClick={()=>navigate('/clothing/mens')} className='border-2 px-2 py-1 hover:bg-black hover:text-white cursor-pointer'>Men's</button>
+                        <button onClick={()=>navigate('/clothing/womens')} className='border-2 px-2 py-1 hover:bg-black hover:text-white cursor-pointer'>Women's</button>
 
                     </div>
                 </div>
