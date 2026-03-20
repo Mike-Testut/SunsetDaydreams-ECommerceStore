@@ -1,5 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {MockProducts} from "../../assets/MockProducts.js";
+import { loadCartFromStorage } from '../cartStorage'
 
 const initialState = {
     products: MockProducts,
@@ -7,7 +8,7 @@ const initialState = {
     shippingFee: 10,
     search: '',
     showSearch: false,
-    cartItems:{},
+    cartItems:loadCartFromStorage(),
 }
 
 const shopSlice = createSlice({
