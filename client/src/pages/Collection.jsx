@@ -27,7 +27,7 @@ const Collection = () => {
             filtered = filtered.filter(item=>category == item.category)
         }
         if(subcategory.length>0){
-            filtered = filtered.filter(item=>subcategory.includes(item.subCategory));
+            filtered = filtered.filter(item=>subcategory.includes(item.subcategory));
         }
         setFilterProducts(filtered);
     }

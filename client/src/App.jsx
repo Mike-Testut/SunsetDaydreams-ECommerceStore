@@ -7,6 +7,7 @@ import AdminDashboard from "./admin/adminPages/adminDashboard.jsx";
 import AddProduct from "./admin/adminPages/addProduct.jsx";
 import StoreLayout from "./layouts/storeLayout.jsx";
 import AdminLayout from "./admin/adminLayouts/adminLayout.jsx";
+import SearchResults from "./pages/SearchResults.jsx";
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
                     <Route path="/" element={<Home/>} />
                     <Route path="/cart" element={<Cart/>} />
                     <Route path="/clothing/:category" element={<Collection/>} />
+                    <Route path="/search" element={<SearchResults/>}/>
                 </Route>
 
                 {/*Admin Routes*/}
