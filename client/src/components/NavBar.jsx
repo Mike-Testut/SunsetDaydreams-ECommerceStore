@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector} from 'react-redux'
 import { assets } from '../assets/assets'
-import { toggleShowSearch } from '../redux/features/shopSlice'
+import { toggleShowSearch, selectCartCount } from '../redux/features/shopSlice'
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false)
   const dispatch = useDispatch()
-  const showSearch = useSelector((state) => state.shop.showSearch)
-  const cartItems = useSelector((state) => state.shop.cartItems)
 
-  const cartCount = Object.values(cartItems).reduce((total, qty) => total + qty, 0)
+  const cartCount = useSelector(selectCartCount)
+
+
 
   return (
       <div className="flex items-center justify-between py-5 font-medium border-b-2 bg-white">
