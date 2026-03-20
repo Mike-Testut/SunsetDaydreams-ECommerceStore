@@ -50,4 +50,10 @@ export const {
     addToCart,
 } = shopSlice.actions;
 
+export const selectCartCount = (state) => {
+    return Object.values(state.shop.cartItems).reduce((total, sizes) => {
+        return total + Object.values(sizes).reduce((sum, qty) => sum + qty, 0)
+    }, 0)
+}
+
 export default shopSlice.reducer;
