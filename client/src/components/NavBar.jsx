@@ -25,12 +25,12 @@ const NavBar = () => {
           </NavLink>
 
           <NavLink to="/clothing/mens" className="flex flex-col items-center gap-1">
-            <p className="hover:text-black">Men's</p>
+            <p className="hover:text-black">Mens</p>
             <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
           <NavLink to="/clothing/womens" className="flex flex-col items-center gap-1">
-            <p className="hover:text-black">Women's</p>
+            <p className="hover:text-black">Womens</p>
             <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
