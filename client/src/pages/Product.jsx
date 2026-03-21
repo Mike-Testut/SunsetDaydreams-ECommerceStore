@@ -3,7 +3,7 @@ import {Link, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Title from "../components/Title.jsx";
 import ProductPreview from "../components/ProductPreview.jsx";
-import {addToCart} from "../redux/features/shopSlice.js";
+import {addToCart, showToast} from "../redux/features/shopSlice.js";
 
 const Product = () => {
     const {productId} = useParams();
@@ -119,6 +119,7 @@ const Product = () => {
                                     productId: productData._id,
                                     size: selectedSize
                                 }))
+                                dispatch(showToast(`${productData.name} (${selectedSize}) added to cart`))
                             }}
                             className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 cursor-pointer"
                         >

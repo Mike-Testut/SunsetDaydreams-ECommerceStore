@@ -16,7 +16,6 @@ store.subscribe(() => {
 
     if (currentCartItems !== previousCartItems) {
         saveCartToStorage(currentCartItems)
-
         previousCartItems = currentCartItems
     }
 })

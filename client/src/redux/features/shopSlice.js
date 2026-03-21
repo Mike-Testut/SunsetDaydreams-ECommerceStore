@@ -9,6 +9,10 @@ const initialState = {
     search: '',
     showSearch: false,
     cartItems:loadCartFromStorage(),
+    toast:{
+        visible: false,
+        message: '',
+    }
 }
 
 const shopSlice = createSlice({
@@ -62,6 +66,14 @@ const shopSlice = createSlice({
                 delete state.cartItems[productId]
             }
         },
+        showToast: (state, action) => {
+            state.toast.visible = true
+            state.toast.message = action.payload
+        },
+        hideToast: (state) => {
+            state.toast.visible = false
+            state.toast.message = ''
+        },
     }
 })
 
@@ -73,6 +85,8 @@ export const {
     addToCart,
     updateCartQuantity,
     removeFromCart,
+    showToast,
+    hideToast,
 } = shopSlice.actions;
 
 export const selectCartCount = (state) => {

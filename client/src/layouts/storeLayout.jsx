@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 import SearchBar from "../components/SearchBar";
 import Footer from "../components/Footer";
 import ScrollToTop from "../utils/ScrollToTop.js";
+import Toast from "../components/Toast.jsx";
 
 const StoreLayout = () => {
     return (
@@ -12,6 +13,7 @@ const StoreLayout = () => {
             <SearchBar />
             <Outlet />
             <Footer />
+            <Toast />
         </div>
     );
 };
