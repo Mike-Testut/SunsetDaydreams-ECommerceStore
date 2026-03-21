@@ -3,6 +3,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {removeFromCart, updateCartQuantity} from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
 import {Link, useNavigate} from "react-router-dom";
+import OrderSummary from "../components/OrderSummary.jsx";
+import {getCartData, getCartSubtotal, getCartTotal} from "../utils/cartHelpers.js";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -13,35 +15,18 @@ const Cart = () => {
   const currency = useSelector(state => state.shop.currency)
   const shippingFee = useSelector(state => state.shop.shippingFee)
 
-  const cartData = useMemo(()=>{
-    const items =[]
+  const cartData = useMemo(() => {
+    return getCartData(cartItems, products)
+  }, [cartItems, products])
 
-    for (const productId in cartItems){
-      for(const size in cartItems[productId]){
-        const quantity = cartItems[productId][size]
-        const product = products.find((item)=>item._id===productId)
+  const subtotal = useMemo(() => {
+    return getCartSubtotal(cartData)
+  }, [cartData])
 
-        if(product && quantity>0){
-          items.push({
-            productId,
-            size,
-            quantity,
-            product
+  const total = useMemo(() => {
+    return getCartTotal(subtotal, shippingFee, cartData.length > 0)
+  }, [subtotal, shippingFee, cartData])
 
-          })
-        }
-      }
-    }
-    return items
-  },[cartItems,products])
-
-  const subtotal = useMemo(()=>{
-    return cartData.reduce((total, item)=>{
-      return total + item.product.price*item.quantity
-    },0)
-  },[cartData])
-
-  const total = cartData.length > 0 ? subtotal + shippingFee : 0
 
   return (
       cartData.length > 0 ?
@@ -119,51 +104,22 @@ const Cart = () => {
 
       {/*  Right Side - Total Order Info*/}
         <div className="w-full lg:w-100 mb-10">
-          <div className="border p-6 rounded-lg">
-            <div className="text-lg mb-6 text-center underline">
-              <p>Order Summary</p>
-            </div>
-            <div className="flex flex-col gap-4 text-sm">
+          <OrderSummary
+              currency={currency}
+              subtotal={subtotal}
+              shippingFee={shippingFee}
+              total={total}
+              title="Order Summary"
+          >
+            {/* Checkout button */}
+            <button
+                className="w-full bg-black text-white py-3 mt-6 text-sm cursor-pointer"
+                onClick={() => navigate('/checkout')}
+            >
+              PROCEED TO CHECKOUT
+            </button>
+          </OrderSummary>
 
-              {/* Subtotal */}
-              <div className="flex justify-between">
-                <p>Subtotal</p>
-                <p>{currency}{subtotal.toFixed(2)}</p>
-              </div>
-
-              <hr />
-
-              {/* Shipping */}
-              <div className="flex justify-between">
-                <p>Estimated Shipping</p>
-                <p>{currency}{shippingFee.toFixed(2)}</p>
-              </div>
-
-              <hr />
-
-              {/* Tax */}
-              <div className="flex justify-between">
-                <p>Estimated Tax</p>
-                <p> - </p>
-              </div>
-
-              <hr />
-
-              {/* Total */}
-              <div className="flex justify-between font-medium text-base">
-                <p>Total</p>
-                <p>{currency}{total.toFixed(2)}</p>
-              </div>
-
-              {/* Checkout button */}
-              <button
-                  className="w-full bg-black text-white py-3 mt-6 text-sm cursor-pointer"
-                  onClick={() => navigate('/checkout')}
-              >
-                PROCEED TO CHECKOUT
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div> :
