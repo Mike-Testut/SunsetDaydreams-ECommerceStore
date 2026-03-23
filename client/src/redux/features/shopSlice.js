@@ -66,6 +66,9 @@ const shopSlice = createSlice({
                 delete state.cartItems[productId]
             }
         },
+        clearCart: (state) => {
+            state.cartItems = {}
+        },
         showToast: (state, action) => {
             state.toast.visible = true
             state.toast.message = action.payload
@@ -85,6 +88,7 @@ export const {
     addToCart,
     updateCartQuantity,
     removeFromCart,
+    clearCart,
     showToast,
     hideToast,
 } = shopSlice.actions;

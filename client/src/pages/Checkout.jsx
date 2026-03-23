@@ -1,7 +1,10 @@
 import React, {useMemo, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {getCartData, getCartSubtotal, getCartTotal} from "../utils/cartHelpers.js";
+import {clearCart, showToast} from "../redux/features/shopSlice.js";
+import Title from "../components/Title.jsx";
+import OrderSummary from "../components/OrderSummary.jsx";
 
 const Checkout = () => {
     const dispatch = useDispatch();
@@ -37,8 +40,204 @@ const Checkout = () => {
     const total = useMemo(() => {
         return getCartTotal(subtotal, shippingFee, cartData.length > 0)
     }, [subtotal, shippingFee, cartData])
-    return (
-        <div>Checkout</div>
+
+    const handleChange = (e) => {
+        const {name, value} = e.target
+        setFormData((prev) => ({...prev, [name]: value}))
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (cartData.length === 0) {
+            dispatch(showToast('Your cart is empty'))
+            navigate('/cart')
+            return
+        }
+
+        dispatch(clearCart())
+        dispatch(showToast('Order placed successfully'))
+        navigate('/orderplaced')
+    }
+
+    return cartData.length > 0 ? (
+        <form onSubmit={handleSubmit} className="pt-10">
+            <div className="text-2xl mb-8">
+                <Title text1="CHECK" text2="OUT" />
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-10">
+                <div className="flex-1">
+                    <div className="text-xl sm:text-2xl mb-6">
+                        <Title text1="DELIVERY" text2="INFORMATION" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <input
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="First name"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+
+                        <input
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Last name"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+
+                        <input
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            type="email"
+                            placeholder="Email address"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full col-span-2"
+                            required
+                        />
+
+                        <input
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Phone number"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full col-span-2"
+                            required
+                        />
+
+                        <input
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Street address"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full col-span-2"
+                            required
+                        />
+
+                        <input
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="City"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+
+                        <input
+                            name="state"
+                            value={formData.state}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="State"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+
+                        <input
+                            name="zipCode"
+                            value={formData.zipCode}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Zip code"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+
+                        <input
+                            name="country"
+                            value={formData.country}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Country"
+                            className="border border-gray-300 rounded py-2.5 px-3.5 w-full"
+                            required
+                        />
+                    </div>
+
+                    <div className="mt-10">
+                        <div className="text-xl sm:text-2xl mb-6">
+                            <Title text1="PAYMENT" text2="METHOD" />
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    checked={paymentMethod === 'cc'}
+                                    onChange={() => setPaymentMethod('cc')}
+                                />
+                                <span>Credit Card (coming soon)</span>
+                            </label>
+
+                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    checked={paymentMethod === 'stripe'}
+                                    onChange={() => setPaymentMethod('stripe')}
+                                />
+                                <span>Stripe (coming soon)</span>
+                            </label>
+
+                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    checked={paymentMethod === 'paypal'}
+                                    onChange={() => setPaymentMethod('paypal')}
+                                />
+                                <span>PayPal (coming soon)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="w-full lg:w-105">
+                    <OrderSummary
+                        currency={currency}
+                        subtotal={subtotal}
+                        shippingFee={shippingFee}
+                        total={total}
+                        title="Order Summary"
+                        items={cartData}
+                        showItems={true}
+                    >
+                        <button
+                            type="submit"
+                            className="w-full bg-black text-white py-3 text-sm"
+                        >
+                            PLACE ORDER
+                        </button>
+                    </OrderSummary>
+                </div>
+            </div>
+        </form>
+
+    ):(
+        <div className="pt-10">
+            <div className="text-2xl mb-8">
+                <Title text1="CHECK" text2="OUT" />
+            </div>
+
+            <div className="border rounded-lg p-8 text-center mb-10">
+                <p className="text-gray-600 mb-4">Your cart is empty.</p>
+                <Link
+                    to="/cart"
+                    className="inline-block bg-black text-white px-6 py-3 text-sm"
+                >
+                    Go To Cart
+                </Link>
+            </div>
+        </div>
     )
 }
 export default Checkout
