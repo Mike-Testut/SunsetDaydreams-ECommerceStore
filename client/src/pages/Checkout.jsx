@@ -5,6 +5,7 @@ import {getCartData, getCartSubtotal, getCartTotal} from "../utils/cartHelpers.j
 import {clearCart, showToast} from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
 import OrderSummary from "../components/OrderSummary.jsx";
+import {assets} from "../assets/assets.js";
 
 const Checkout = () => {
     const dispatch = useDispatch();
@@ -29,6 +30,16 @@ const Checkout = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('cc')
 
+    const setPaymentButtonText = ((paymentMethod)=>{
+        switch (paymentMethod) {
+            case 'cc':
+                return "PLACE ORDER"
+            case 'stripe':
+                return "CONTINUE TO STRIPE"
+            case 'paypal':
+                return "CONTINUE TO PAYPAL"
+        }
+    })
     const cartData = useMemo(() => {
         return getCartData(cartItems, products)
     }, [cartItems, products])
@@ -67,7 +78,7 @@ const Checkout = () => {
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1">
                     <div className="text-xl sm:text-2xl mb-6">
-                        <Title text1="DELIVERY" text2="INFORMATION" />
+                        <p>Shipping Information</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -162,9 +173,9 @@ const Checkout = () => {
                         />
                     </div>
 
-                    <div className="mt-10">
+                    <div className="my-10">
                         <div className="text-xl sm:text-2xl mb-6">
-                            <Title text1="PAYMENT" text2="METHOD" />
+                            <p>Payment Method</p>
                         </div>
 
                         <div className="flex flex-col gap-3">
@@ -185,7 +196,7 @@ const Checkout = () => {
                                     checked={paymentMethod === 'stripe'}
                                     onChange={() => setPaymentMethod('stripe')}
                                 />
-                                <span>Stripe (coming soon)</span>
+                                <span><img src={assets.stripe_logo} alt='stripe logo' className="h-6" /></span>
                             </label>
 
                             <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
@@ -195,10 +206,16 @@ const Checkout = () => {
                                     checked={paymentMethod === 'paypal'}
                                     onChange={() => setPaymentMethod('paypal')}
                                 />
-                                <span>PayPal (coming soon)</span>
+                                <span><img src={assets.paypal_logo} alt='paypal logo' className="h-6" /></span>
                             </label>
                         </div>
                     </div>
+                    {paymentMethod === 'cc' && (
+                        <div className='my-10'>
+                            CC FORM COMING SOON
+                        </div>
+                    )}
+
                 </div>
 
                 <div className="w-full lg:w-105">
@@ -215,7 +232,7 @@ const Checkout = () => {
                             type="submit"
                             className="w-full bg-black text-white py-3 text-sm"
                         >
-                            PLACE ORDER
+                            {setPaymentButtonText(paymentMethod)}
                         </button>
                     </OrderSummary>
                 </div>

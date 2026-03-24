@@ -11,6 +11,9 @@ import SearchResults from "./pages/SearchResults.jsx";
 import Product from "./pages/Product.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import OrderPlaced from "./pages/OrderPlaced.jsx";
+import AccountHome from "./pages/AccountHome.jsx";
+import Login from "./pages/Login.jsx";
+import SignUp from "./pages/SignUp.jsx";
 
 
 const App = () => {
@@ -25,6 +28,11 @@ const App = () => {
                     <Route path="/products/:productId" element={<Product/>}/>
                     <Route path="/checkout" element={<Checkout/>}/>
                     <Route path="/orderplaced" element={<OrderPlaced/>}/>
+                    <Route path="account/login" element={<Login/>}/>
+                    <Route path="account/signup" element={<SignUp/>}/>
+
+                {/*    User Account Routes */}
+                    <Route path="account/myaccount" element={<AccountHome/>}/>
                 </Route>
 
                 {/*Admin Routes*/}

@@ -10,7 +10,7 @@ const NavBar = () => {
 
   const cartCount = useSelector(selectCartCount)
 
-
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
 
   return (
       <div className="flex items-center justify-between py-5 font-medium border-b-2 bg-white">
@@ -49,12 +49,22 @@ const NavBar = () => {
           />
 
           <div className="group relative">
-            <img src={assets.ProfileIcon} alt="profile icon" className="w-6 cursor-pointer" />
+            <Link to={isUserLoggedIn ? `/account/myaccount` : `/account/login`}>
+              <img src={assets.ProfileIcon} alt="profile icon" className="w-6 cursor-pointer" />
+            </Link>
             <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
               <div className="flex flex-col items-center gap-2 w-36 py-3 bg-slate-100 text-gray-500 rounded">
-                <p className="cursor-pointer hover:text-black">My Profile</p>
-                <p className="cursor-pointer hover:text-black">Orders</p>
-                <p className="cursor-pointer hover:text-black">Logout</p>
+                {isUserLoggedIn ?
+                    <>
+                      <p className="cursor-pointer hover:text-black">My Profile</p>
+                      <p className="cursor-pointer hover:text-black">Orders</p>
+                      <p className="cursor-pointer hover:text-black">Logout</p>
+                    </>
+                  :
+                    <Link to={'/account/login'} >
+                      <p className="cursor-pointer hover:text-black">Log In</p>
+                    </Link>
+                }
               </div>
             </div>
           </div>
