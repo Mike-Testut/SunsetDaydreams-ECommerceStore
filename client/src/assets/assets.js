@@ -17,6 +17,8 @@ import HeroImage from "./HeroImage.png"
 import dropdown_icon from "./dropdown_icon.png"
 import cross_icon from "./cross_icon.png"
 import favicon from "./favicon.png"
+import stripe_logo from "./stripe_logo.png"
+import paypal_logo from "./paypal_logo.png"
 
 
 
@@ -40,5 +42,7 @@ export const assets = {
     dropdown_icon,
     cross_icon,
     favicon,
+    stripe_logo,
+    paypal_logo,
 
 }
