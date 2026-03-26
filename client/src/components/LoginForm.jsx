@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {setCredentials} from "../redux/features/authSlice.js";
+import { API_URL } from '../config/api'
 
 
 const LoginForm = ({formType}) => {
@@ -23,6 +24,7 @@ const LoginForm = ({formType}) => {
             ...prev,
             [name]: value,
         }))
+        console.log(formData)
     }
 
     const navigate = useNavigate();
@@ -34,9 +36,9 @@ const LoginForm = ({formType}) => {
 
         try{
             const endpoint =
-                formType === "login" ?
-                    '/api/auth/login' :
-                    '/api/auth/register'
+                formType === 'login'
+                    ? `${API_URL}/api/user/login`
+                    : `${API_URL}/api/user/register`
             const payload =
                 formType === "login"
                     ? {
@@ -83,6 +85,8 @@ const LoginForm = ({formType}) => {
             formType === "signup" && (
                 <input
                     required
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     placeholder='name'
                     className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2'
@@ -90,6 +94,8 @@ const LoginForm = ({formType}) => {
             )}
             <input
                 required
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
                 type='email'
                 placeholder='email'
@@ -97,6 +103,8 @@ const LoginForm = ({formType}) => {
             />
             <input
                 required
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
                 type='password'
                 placeholder='password'
@@ -106,6 +114,8 @@ const LoginForm = ({formType}) => {
                 formType === "signup" &&
                 <input
                     required
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
                     onChange={handleChange}
                     type='password'
                     placeholder='confirm password'
