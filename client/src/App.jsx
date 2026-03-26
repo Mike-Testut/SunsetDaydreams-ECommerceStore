@@ -30,6 +30,7 @@ const App = () => {
                     <Route path="/orderplaced" element={<OrderPlaced/>}/>
                     <Route path="account/login" element={<Login/>}/>
                     <Route path="account/signup" element={<SignUp/>}/>
+                    <Route path="account/home" element={<AccountHome/>}/>
 
                 {/*    User Account Routes */}
                     <Route path="account/myaccount" element={<AccountHome/>}/>
