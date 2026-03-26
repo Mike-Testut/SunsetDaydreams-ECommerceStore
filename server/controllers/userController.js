@@ -1,4 +1,4 @@
-import userModel from "../models/userModel.js";
+import UserModel from "../models/userModel.js";
 import validator from "validator"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -17,7 +17,7 @@ const createToken = (user)=>{
 const loginUser = async (req, res) => {
     try {
         const {email, password} = req.body;
-        const user = await userModel.findOne({email});
+        const user = await UserModel.findOne({email});
         if (!user) {
             return res.json({success: false, error: "User does not exist"});
         }
@@ -46,10 +46,13 @@ const loginUser = async (req, res) => {
 const registerUser = async (req, res) => {
     try {
         console.log(req.body);
-        const {name, email, password} = req.body;
+        const {name, email, password, confirmPassword} = req.body;
 
+        if (!name || !email || !password || !confirmPassword) {
+            return res.status(400).json({ message: 'All fields are required' })
+        }
         //check to see if user already exists
-        const exist = await userModel.findOne({email});
+        const exist = await UserModel.findOne({email});
         if (exist) {
             return res.json({success: false, error: "Email already exists"});
         }
@@ -60,6 +63,10 @@ const registerUser = async (req, res) => {
         if(password.length < 8){
             return res.json({success: false, error: "Password must be at least 8 characters"});
         }
+        //confirm password
+        if(password !== confirmPassword){
+            return res.json({success: false, error: "Passwords do not match"});
+        }
 
         //password hashing
         const salt = await bcrypt.genSalt(10);
@@ -67,10 +74,10 @@ const registerUser = async (req, res) => {
 
         //create new user
             //set admin role if first registered user
-        const userCount = await userModel.countDocuments();
+        const userCount = await UserModel.countDocuments();
         const role = userCount === 0 ? "admin" : "user";
 
-        const newUser = new userModel({
+        const newUser = new UserModel({
             name,
             email,
             password:hashedPassword,
@@ -81,6 +88,21 @@ const registerUser = async (req, res) => {
     } catch (error) {
         console.log("something went wrong", error)
         return res.json({success: false, error: error.message});
+    }
+}
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.user.userId).select('-password')
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+
+        res.status(200).json({ user })
+    } catch (error) {
+        console.error('Get current user error:', error)
+        res.status(500).json({ message: 'Server error fetching user' })
     }
 }
 

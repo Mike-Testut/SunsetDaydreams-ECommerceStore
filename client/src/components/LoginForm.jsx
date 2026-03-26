@@ -1,40 +1,124 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Link, useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {setCredentials} from "../redux/features/authSlice.js";
 
 
 const LoginForm = ({formType}) => {
-    
+    const dispatch = useDispatch();
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const [formData, setFormData] = useState({
+        name:'',
+        email:'',
+        password:'',
+        confirmPassword:'',
+    })
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }))
+    }
+
     const navigate = useNavigate();
-    const handleSubmit = (e) => {
-        switch(formType){
-            case "login":
-                e.preventDefault();
-                navigate("/account/home")
-                break
-            case "signup":
-                e.preventDefault();
-                return
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('')
+        setLoading(true)
+
+        try{
+            const endpoint =
+                formType === "login" ?
+                    '/api/auth/login' :
+                    '/api/auth/register'
+            const payload =
+                formType === "login"
+                    ? {
+                        email: formData.email,
+                        password: formData.password,
+                    }
+                    : {
+                        name: formData.name,
+                        email: formData.email,
+                        password: formData.password,
+                        confirmPassword: formData.confirmPassword,
+                    }
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+
+            const data = await response.json();
+
+            if(!response.ok){
+                throw new Error(data.message || "Something went wrong");
+            }
+            dispatch(
+                setCredentials({
+                    token: data.token,
+                    user: data.user,
+                })
+            )
+            navigate('/account/home')
+
+        } catch(error){
+            setError(error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
         <form onSubmit={handleSubmit} className='w-full flex flex-col gap-4 items-center '>
             {
-                formType === "signup" &&
-                (<input required placeholder='name' className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2' />)
-            }
-            <input required type='email' placeholder='email' className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2' />
-            <input required type='password' placeholder='password' className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2' />
+            formType === "signup" && (
+                <input
+                    required
+                    onChange={handleChange}
+                    placeholder='name'
+                    className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2'
+                />
+            )}
+            <input
+                required
+                onChange={handleChange}
+                type='email'
+                placeholder='email'
+                className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2'
+            />
+            <input
+                required
+                onChange={handleChange}
+                type='password'
+                placeholder='password'
+                className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2'
+            />
             {
                 formType === "signup" &&
-                <input required type='password' placeholder='confirm password' className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2' />
+                <input
+                    required
+                    onChange={handleChange}
+                    type='password'
+                    placeholder='confirm password'
+                    className='border border-gray-300 rounded py-2.5 px-3.5 w-1/3 col-span-2'
+                />
             }
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             {
                 formType === "login" &&
                 <Link to="/login" className='w-1/3 underline text-gray-500 text-xs text-end hover:text-black '>Forgot Password?</Link>
             }
             <button type='submit' className='border-black border py-2 px-8 hover:bg-black hover:text-white ease-in-out cursor-pointer'>
-                {formType === "login" ? 'Log in' : 'Sign Up'}
+                {loading ? 'Loading...' : formType === 'login' ? 'Log In' : 'Sign Up'}
             </button>
         </form>
     )
