@@ -19,6 +19,10 @@ import cross_icon from "./cross_icon.png"
 import favicon from "./favicon.png"
 import stripe_logo from "./stripe_logo.png"
 import paypal_logo from "./paypal_logo.png"
+import loyalty_bday from "./loyalty-bday.png"
+import loyalty_points from "./loyalty-points.png"
+import loyalty_shipping from "./loyalty-shipping.png"
+
 
 
 
@@ -44,5 +48,8 @@ export const assets = {
     favicon,
     stripe_logo,
     paypal_logo,
+    loyalty_bday,
+    loyalty_points,
+    loyalty_shipping,
 
 }
