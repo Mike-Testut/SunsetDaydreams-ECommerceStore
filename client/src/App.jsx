@@ -14,6 +14,7 @@ import OrderPlaced from "./pages/OrderPlaced.jsx";
 import AccountHome from "./pages/AccountHome.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 
 const App = () => {
@@ -33,7 +34,12 @@ const App = () => {
                 {/*    User Account Routes */}
                     <Route path="account/login" element={<Login/>}/>
                     <Route path="account/signup" element={<SignUp/>}/>
-                    <Route path="account/home" element={<AccountHome/>}/>
+                    <Route path="account/home" element={
+                        <ProtectedRoute>
+                            <AccountHome/>
+                        </ProtectedRoute>
+                    }/>
+
                 </Route>
 
                 {/*Admin Routes*/}
