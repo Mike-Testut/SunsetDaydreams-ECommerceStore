@@ -1,3 +1,4 @@
+import { isTokenExpired } from '../utils/jwtHelpers'
 
 export const saveAuthToStorage = ({token, user}) => {
     try {
@@ -21,10 +22,21 @@ export const loadAuthFromStorage = () => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
 
+        if (token && isTokenExpired(token)) {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+
+            return {
+                token: null,
+                user: null,
+                isAuthenticated: false,
+            }
+        }
+
         return {
-            token: token || null,
-            user: user ? JSON.parse(user) : null,
-            isAuthenticated: !!token,
+        token: token || null,
+        user: user ? JSON.parse(user) : null,
+        isAuthenticated: !!token,
         }
     } catch(error){
         console.error('Failed to load auth from localStorage:', error)

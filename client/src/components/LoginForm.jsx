@@ -24,7 +24,6 @@ const LoginForm = ({formType}) => {
             ...prev,
             [name]: value,
         }))
-        console.log(formData)
     }
 
     const navigate = useNavigate();
