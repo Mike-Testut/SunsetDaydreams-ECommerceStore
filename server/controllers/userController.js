@@ -17,9 +17,12 @@ const createToken = (user)=>{
 const loginUser = async (req, res) => {
     try {
         const {email, password} = req.body;
+        if(!email || !password){
+            return res.status(400).json({error: "Email and Password are required"});
+        }
         const user = await UserModel.findOne({email});
         if (!user) {
-            return res.json({success: false, error: "User does not exist"});
+            return res.status(401).json({success: false, error: "User does not exist"});
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if(passwordMatch){
@@ -35,11 +38,11 @@ const loginUser = async (req, res) => {
                 },
             });
         } else {
-            res.json({success: false, error: "Password is incorrect"});
+            res.status(401).json({success: false, error: "Password is incorrect"});
         }
     } catch (error) {
         console.log(error)
-        return res.json({success: false, error: error.message});
+        return res.status(500).json({success: false, error: error.message});
     }
 }
 
@@ -54,18 +57,18 @@ const registerUser = async (req, res) => {
         //check to see if user already exists
         const exist = await UserModel.findOne({email});
         if (exist) {
-            return res.json({success: false, error: "Email already exists"});
+            return res.status(400).json({success: false, error: "Email already exists"});
         }
         //validate email and password length
         if(!validator.isEmail(email)) {
-            return res.json({success: false, error: "Please enter a valid email"});
+            return res.status(400).json({success: false, error: "Please enter a valid email"});
         }
         if(password.length < 8){
-            return res.json({success: false, error: "Password must be at least 8 characters"});
+            return res.status(400).json({success: false, error: "Password must be at least 8 characters"});
         }
         //confirm password
         if(password !== confirmPassword){
-            return res.json({success: false, error: "Passwords do not match"});
+            return res.status(400).json({success: false, error: "Passwords do not match"});
         }
 
         //password hashing
@@ -84,16 +87,16 @@ const registerUser = async (req, res) => {
             role});
         const user = await newUser.save()
         const token = createToken(user);
-        res.json({success: true, token})
+        res.status(201).json({success: true, token})
     } catch (error) {
         console.log("something went wrong", error)
-        return res.json({success: false, error: error.message});
+        return res.status(500).json({success: false, error: error.message});
     }
 }
 
 export const getCurrentUser = async (req, res) => {
     try {
-        const user = await UserModel.findById(req.user.userId).select('-password')
+        const user = await UserModel.findById(req.user._id).select('-password')
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' })

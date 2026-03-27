@@ -5,7 +5,7 @@ import {setCredentials} from "../redux/features/authSlice.js";
 import { API_URL } from '../config/api'
 
 
-const LoginForm = ({formType}) => {
+const LoginForm = ({formType, onSuccess }) => {
     const dispatch = useDispatch();
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -60,8 +60,16 @@ const LoginForm = ({formType}) => {
 
             const data = await response.json();
 
-            if(!response.ok){
-                throw new Error(data.message || "Something went wrong");
+            if (!response.ok || !data.success) {
+                setError(data.message || data.error || 'Authentication failed')
+                setLoading(false)
+                return
+            }
+
+            if (!data.token || !data.user) {
+                setError('Invalid server response')
+                setLoading(false)
+                return
             }
             dispatch(
                 setCredentials({
@@ -69,6 +77,9 @@ const LoginForm = ({formType}) => {
                     user: data.user,
                 })
             )
+            if (onSuccess) {
+                onSuccess()
+            }
             navigate('/account/home')
 
         } catch(error){

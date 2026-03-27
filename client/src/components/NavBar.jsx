@@ -1,16 +1,26 @@
 import React, { useState } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import {NavLink, Link, useNavigate} from 'react-router-dom'
 import { useDispatch, useSelector} from 'react-redux'
 import { assets } from '../assets/assets'
 import { toggleShowSearch, selectCartCount } from '../redux/features/shopSlice'
+import {logout, selectCurrentUser, selectIsAuthenticated} from "../redux/features/authSlice.js";
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false)
   const dispatch = useDispatch()
+  const user = useSelector(selectCurrentUser)
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const navigate = useNavigate()
 
   const cartCount = useSelector(selectCartCount)
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+  const handleLogout = () => {
+    navigate('/',{replace: true})
+    setTimeout(() => {
+      dispatch(logout())
+    }, 1)
+  }
+
 
   return (
       <div className="flex items-center justify-between py-5 font-medium border-b-2 bg-white">
@@ -49,16 +59,19 @@ const NavBar = () => {
           />
 
           <div className="group relative">
-            <Link to={isUserLoggedIn ? `/account/myaccount` : `/account/login`}>
+            <Link to={isAuthenticated ? `/account/home` : `/account/login`}>
               <img src={assets.ProfileIcon} alt="profile icon" className="w-6 cursor-pointer" />
             </Link>
             <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
               <div className="flex flex-col items-center gap-2 w-36 py-3 bg-slate-100 text-gray-500 rounded">
-                {isUserLoggedIn ?
+                {isAuthenticated ?
                     <>
                       <p className="cursor-pointer hover:text-black">My Profile</p>
                       <p className="cursor-pointer hover:text-black">Orders</p>
-                      <p className="cursor-pointer hover:text-black">Logout</p>
+                      <button onClick={handleLogout}>
+                        <p className="cursor-pointer hover:text-black">Logout</p>
+                      </button>
+
                     </>
                   :
                     <Link to={'/account/login'} >
