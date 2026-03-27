@@ -1,10 +1,14 @@
 import React from 'react'
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import LoginForm from "../components/LoginForm.jsx";
 import Title from "../components/Title.jsx";
 import {assets} from "../assets/assets.js";
 
 const Login = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/account/home'
+
     return (
         <div className="flex flex-col items-center  ">
             <div className='text-center py-8 text-3xl'>
@@ -27,7 +31,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <LoginForm formType = 'login'/>
+            <LoginForm formType = 'login' onSuccess={() => navigate(from, { replace: true })}/>
             <div className='text-center py-8'>
                 <Link to="/account/signup" className='underline hover:font-semibold'>No Account? Sign Up Here</Link>
             </div>

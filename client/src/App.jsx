@@ -15,39 +15,54 @@ import AccountHome from "./pages/AccountHome.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import AdminRoute from "./components/AdminRoute.jsx";
+import Orders from "./pages/Orders.jsx";
 
 
 const App = () => {
     return (
-            <Routes>
-                {/*Public Store Routes*/}
-                <Route element = {<StoreLayout/>}>
-                    <Route path="/" element={<Home/>} />
-                    <Route path="/cart" element={<Cart/>} />
-                    <Route path="/clothing/:category" element={<Collection/>} />
-                    <Route path="/search" element={<SearchResults/>}/>
-                    <Route path="/products/:productId" element={<Product/>}/>
-                    <Route path="/checkout" element={<Checkout/>}/>
-                    <Route path="/orderplaced" element={<OrderPlaced/>}/>
+        <Routes>
+            {/*Public Store Routes*/}
+            <Route element={<StoreLayout/>}>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/cart" element={<Cart/>}/>
+                <Route path="/clothing/:category" element={<Collection/>}/>
+                <Route path="/search" element={<SearchResults/>}/>
+                <Route path="/products/:productId" element={<Product/>}/>
+                <Route path="/checkout" element={<Checkout/>}/>
+                <Route path="/orderplaced" element={<OrderPlaced/>}/>
 
 
                 {/*    User Account Routes */}
-                    <Route path="account/login" element={<Login/>}/>
-                    <Route path="account/signup" element={<SignUp/>}/>
-                    <Route path="account/home" element={
-                        <ProtectedRoute>
-                            <AccountHome/>
-                        </ProtectedRoute>
-                    }/>
+                <Route path="account/login" element={<Login/>}/>
+                <Route path="account/signup" element={<SignUp/>}/>
+                <Route path="account/home" element={
+                    <ProtectedRoute>
+                        <AccountHome/>
+                    </ProtectedRoute>
+                }/>
+                <><Route path="account/orders" element={
+                    <ProtectedRoute>
+                        <Orders/>
+                    </ProtectedRoute>
+                }/></>
 
-                </Route>
+            </Route>
 
-                {/*Admin Routes*/}
-                <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="addproduct" element={<AddProduct />} />
-                </Route>
-            </Routes>
-    )
+            {/*Admin Routes*/}
+            <Route path="/admin" element={<AdminLayout/>}>
+                <Route index element={
+                    <AdminRoute>
+                        <AdminDashboard/>
+                    </AdminRoute>
+                }/>
+                <Route path="addproduct" element={
+                    <AdminRoute>
+                        <AddProduct/>
+                    </AdminRoute>
+                }/>
+            </Route>
+        </Routes>
+    );
 }
 export default App
