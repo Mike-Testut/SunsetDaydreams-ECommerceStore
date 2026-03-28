@@ -51,23 +51,27 @@ const NavBar = () => {
         </ul>
 
         <div className="flex items-center gap-6">
+          {isAuthenticated ? <p>Hi, {user.name.split(" ")[0]}!</p>:<></>}
           <img
               onClick={() => dispatch(toggleShowSearch())}
               src={assets.SearchIcon}
               alt="search icon"
               className="w-5 cursor-pointer"
           />
-
           <div className="group relative">
             <Link to={isAuthenticated ? `/account/home` : `/account/login`}>
               <img src={assets.ProfileIcon} alt="profile icon" className="w-6 cursor-pointer" />
             </Link>
-            <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
+            <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-50">
               <div className="flex flex-col items-center gap-2 w-36 py-3 bg-slate-100 text-gray-500 rounded">
                 {isAuthenticated ?
                     <>
-                      <p className="cursor-pointer hover:text-black">My Profile</p>
-                      <p className="cursor-pointer hover:text-black">Orders</p>
+                      <button onClick={()=>navigate("/account/home")}>
+                        <p className="cursor-pointer hover:text-black">My Profile</p>
+                      </button>
+                      <button onClick={()=>navigate("/account/orders")}>
+                        <p className="cursor-pointer hover:text-black">Orders</p>
+                      </button>
                       <button onClick={handleLogout}>
                         <p className="cursor-pointer hover:text-black">Logout</p>
                       </button>

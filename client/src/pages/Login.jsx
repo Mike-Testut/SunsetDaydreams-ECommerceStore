@@ -7,7 +7,7 @@ import {assets} from "../assets/assets.js";
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || '/account/home'
+    const from = location.state?.from?.pathname || '/account'
 
     return (
         <div className="flex flex-col items-center  ">
