@@ -34,18 +34,18 @@ const App = () => {
 
 
                 {/*    User Account Routes */}
-                <Route path="account/login" element={<Login/>}/>
-                <Route path="account/signup" element={<SignUp/>}/>
-                <Route path="account/home" element={
+                <Route path="/account/login" element={<Login/>}/>
+                <Route path="/account/signup" element={<SignUp/>}/>
+                <Route path="/account/home" element={
                     <ProtectedRoute>
                         <AccountHome/>
                     </ProtectedRoute>
                 }/>
-                <><Route path="account/orders" element={
+                <Route path="/account/orders" element={
                     <ProtectedRoute>
                         <Orders/>
                     </ProtectedRoute>
-                }/></>
+                }/>
 
             </Route>
 
