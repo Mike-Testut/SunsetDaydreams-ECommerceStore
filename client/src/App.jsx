@@ -12,11 +12,14 @@ import Product from "./pages/Product.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import OrderPlaced from "./pages/OrderPlaced.jsx";
 import AccountHome from "./pages/AccountHome.jsx";
+import Orders from "./pages/Orders.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
-import Orders from "./pages/Orders.jsx";
+import AdminOrders from "./admin/adminPages/adminOrders.jsx";
+import AllProducts from "./admin/adminPages/allProducts.jsx";
+import Customers from "./admin/adminPages/customers.jsx";
 
 
 const App = () => {
@@ -56,9 +59,24 @@ const App = () => {
                         <AdminDashboard/>
                     </AdminRoute>
                 }/>
+                <Route path="products" element={
+                    <AdminRoute>
+                        <AllProducts/>
+                    </AdminRoute>
+                }/>
                 <Route path="addproduct" element={
                     <AdminRoute>
                         <AddProduct/>
+                    </AdminRoute>
+                }/>
+                <Route path="orders" element={
+                    <AdminRoute>
+                        <AdminOrders/>
+                    </AdminRoute>
+                }/>
+                <Route path="customers" element={
+                    <AdminRoute>
+                        <Customers />
                     </AdminRoute>
                 }/>
             </Route>

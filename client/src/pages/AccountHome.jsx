@@ -1,5 +1,6 @@
 import React from 'react'
 import Title from "../components/Title.jsx";
+import {Link} from "react-router-dom";
 
 const AccountHome = () => {
 
@@ -11,7 +12,7 @@ const AccountHome = () => {
             <div>
                 <ul>
 
-                    <li>My Orders</li>
+                    <li><Link to='/account/orders'>My Orders</Link></li>
                     <li>My Wishlist</li>
                     <li>My Rewards</li>
                     <li>Account Settings</li>
