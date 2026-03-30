@@ -6,6 +6,7 @@ import {clearCart, showToast} from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
 import OrderSummary from "../components/OrderSummary.jsx";
 import {assets} from "../assets/assets.js";
+import {API_URL} from "../config/api.js";
 
 const Checkout = () => {
     const dispatch = useDispatch();
@@ -56,7 +57,7 @@ const Checkout = () => {
         const {name, value} = e.target
         setFormData((prev) => ({...prev, [name]: value}))
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (cartData.length === 0) {
             dispatch(showToast('Your cart is empty'))
@@ -64,9 +65,56 @@ const Checkout = () => {
             return
         }
 
-        dispatch(clearCart())
-        dispatch(showToast('Order placed successfully'))
-        navigate('/orderplaced')
+        if(paymentMethod !== 'cc'){
+            dispatch(showToast('Payment meth not currently supported'))
+            return
+        }
+
+        try{
+            const orderItems = cartData.map((item)=>({
+                productId: item.productId,
+                name: item.product.name,
+                image: item.product.image[0],
+                size: item.size,
+                quantity: item.quantity,
+                price: item.product.price,
+                })
+            )
+
+            const response = await fetch(
+                `${API_URL}/api/order/create`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        items: orderItems,
+                        shippingAddress: formData,
+                        paymentMethod,
+                        subtotal,
+                        shippingFee,
+                        tax: 0,
+                        total,
+                    })
+                },
+                true
+            )
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                dispatch(showToast(data.message || 'Failed to place order'))
+                return
+            }
+            dispatch(clearCart())
+            dispatch(showToast('Order placed successfully'))
+            navigate('/orderplaced')
+
+        } catch(error) {
+            console.log("could not create order", error)
+            dispatch(showToast('Something went wrong placing your order'))
+        }
     }
 
     return cartData.length > 0 ? (
