@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 const linkBase =
     "block rounded-lg px-4 py-2 text-sm font-medium transition";
 
-const AdminSidebar = () => {
+const AdminSideBar = () => {
     return (
         <aside className="flex h-full w-64 flex-col border border-gray-200 bg-white">
             <nav className="flex-1 space-y-2 px-4 py-6">
@@ -85,4 +85,4 @@ const AdminSidebar = () => {
     );
 };
 
-export default AdminSidebar;
+export default AdminSideBar;
