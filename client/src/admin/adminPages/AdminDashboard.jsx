@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from "../../components/Title.jsx";
-import Notifications from "../adminComponents/notifications.jsx";
+import Notifications from "../adminComponents/Notifications.jsx";
 
 const AdminDashboard = () => {
     return (

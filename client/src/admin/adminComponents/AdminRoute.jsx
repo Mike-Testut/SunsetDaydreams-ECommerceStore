@@ -1,6 +1,6 @@
 import React from 'react'
 import {useSelector} from "react-redux";
-import {selectIsAdmin, selectIsAuthenticated} from "../redux/features/authSlice.js";
+import {selectIsAdmin, selectIsAuthenticated} from "../../redux/features/authSlice.js";
 import {Navigate} from "react-router-dom";
 
 const AdminRoute = ({children}) => {

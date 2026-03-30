@@ -1,10 +1,10 @@
 import React from 'react'
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Cart from "./pages/Cart.jsx";
 import Collection from "./pages/Collection.jsx";
-import AdminDashboard from "./admin/adminPages/adminDashboard.jsx";
-import AddProduct from "./admin/adminPages/addProduct.jsx";
+import AdminDashboard from "./admin/adminPages/AdminDashboard.jsx";
+import AddProduct from "./admin/adminPages/AddProduct.jsx";
 import StoreLayout from "./layouts/storeLayout.jsx";
 import AdminLayout from "./admin/adminLayouts/adminLayout.jsx";
 import SearchResults from "./pages/SearchResults.jsx";
@@ -16,10 +16,11 @@ import Orders from "./pages/Orders.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import AdminRoute from "./components/AdminRoute.jsx";
-import AdminOrders from "./admin/adminPages/adminOrders.jsx";
-import AllProducts from "./admin/adminPages/allProducts.jsx";
-import Customers from "./admin/adminPages/customers.jsx";
+import AdminRoute from "./admin/adminComponents/AdminRoute.jsx";
+import AdminOrders from "./admin/adminPages/AdminOrders.jsx";
+import AllProducts from "./admin/adminPages/AllProducts.jsx";
+import Customers from "./admin/adminPages/Customers.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/products/:productId" element={<Product/>}/>
                 <Route path="/checkout" element={<Checkout/>}/>
                 <Route path="/orderplaced" element={<OrderPlaced/>}/>
+                <Route path="*" element={<ErrorPage/>}/>
 
 
                 {/*    User Account Routes */}
@@ -53,32 +55,14 @@ const App = () => {
             </Route>
 
             {/*Admin Routes*/}
-            <Route path="/admin" element={<AdminLayout/>}>
-                <Route index element={
-                    <AdminRoute>
-                        <AdminDashboard/>
-                    </AdminRoute>
-                }/>
-                <Route path="products" element={
-                    <AdminRoute>
-                        <AllProducts/>
-                    </AdminRoute>
-                }/>
-                <Route path="addproduct" element={
-                    <AdminRoute>
-                        <AddProduct/>
-                    </AdminRoute>
-                }/>
-                <Route path="orders" element={
-                    <AdminRoute>
-                        <AdminOrders/>
-                    </AdminRoute>
-                }/>
-                <Route path="customers" element={
-                    <AdminRoute>
-                        <Customers />
-                    </AdminRoute>
-                }/>
+            <Route path="/admin" element={
+                <AdminRoute>
+                    <AdminLayout/>
+                </AdminRoute>
+            }>
+                <Route index element={<AdminDashboard />} />
+                <Route path="addproduct" element={<AddProduct />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>
     );
