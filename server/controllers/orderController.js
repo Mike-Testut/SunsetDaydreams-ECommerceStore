@@ -36,7 +36,7 @@ const createOrder = async (req, res) => {
 
         const orderData={
             orderNumber: generateOrderNumber(),
-            user: req.user?.id || null,
+            user: req.user ? req.user.id : null,
             items: normalizedItems,
             shippingAddress,
             paymentMethod: paymentMethod || 'cc',
@@ -46,6 +46,7 @@ const createOrder = async (req, res) => {
             total: normalizedTotal,
         }
         const order = await OrderModel.create(orderData)
+
         return res.status(201).json({
             success: true,
             message: 'Order placed successfully',

@@ -7,10 +7,12 @@ import Title from "../components/Title.jsx";
 import OrderSummary from "../components/OrderSummary.jsx";
 import {assets} from "../assets/assets.js";
 import {API_URL} from "../config/api.js";
+import {selectToken} from "../redux/features/authSlice.js";
 
 const Checkout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const token = useSelector(selectToken);
 
     const products = useSelector((state) => state.shop.products)
     const cartItems = useSelector((state) => state.shop.cartItems)
@@ -87,6 +89,7 @@ const Checkout = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify({
                         items: orderItems,
