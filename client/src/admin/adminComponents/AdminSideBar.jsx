@@ -5,7 +5,7 @@ const linkBase =
 
 const AdminSideBar = () => {
     return (
-        <aside className="flex h-full w-64 flex-col border border-gray-200 bg-white">
+        <aside className="flex h-fit w-64 flex-col border border-gray-200 rounded-sm bg-white">
             <nav className="flex-1 space-y-2 px-4 py-6">
                 <NavLink
                     to="/admin"
