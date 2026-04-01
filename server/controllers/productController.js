@@ -41,18 +41,35 @@ const addProduct = async (req, res) => {
 const listProducts = async (req, res) => {
     try{
         const products = await ProductModel.find({})
-        res.json({success: true, products});
+        res.status(200).json({success: true, products});
     } catch(error){
-        res.json({success:false, error:error.message})
+        res.status(500).json({success:false, error:error.message})
     }
 }
 
 const removeProduct = async (req, res) => {
-    try{
-        await ProductModel.findByIdAndDelete(req.body.id)
-        res.json({success: true, message: 'Successfully removed product.'});
-    }catch(error){
-        res.json({success:false, error:error.message})
+    try {
+        const { productId } = req.params
+
+        const deletedProduct = await ProductModel.findByIdAndDelete(productId)
+
+        if (!deletedProduct) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found',
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Product deleted successfully',
+        })
+    } catch (error) {
+        console.log('deleteProduct error:', error)
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        })
     }
 }
 

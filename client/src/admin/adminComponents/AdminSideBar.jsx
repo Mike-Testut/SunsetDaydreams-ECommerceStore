@@ -78,7 +78,7 @@ const AdminSideBar = () => {
                     to="/"
                     className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                 >
-                    Back to Store
+                    Go to Store
                 </Link>
             </div>
         </aside>
