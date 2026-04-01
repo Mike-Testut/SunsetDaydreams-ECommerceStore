@@ -8,8 +8,8 @@ const productRouter = express.Router();
 
 productRouter.post("/add", protect, adminOnly, upload.array("images",5), addProduct);
 productRouter.get("/all", listProducts);
-productRouter.post("/remove/:id",protect, adminOnly, removeProduct);
-productRouter.post("/:id", viewSingleProduct);
+productRouter.get("/:id", viewSingleProduct);
+productRouter.delete("/:id",protect, adminOnly, removeProduct);
 productRouter.put("/update/:id", protect, adminOnly, updateProduct);
 
 export default productRouter;
