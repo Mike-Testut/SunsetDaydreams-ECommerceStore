@@ -121,33 +121,33 @@ const AllProducts = () => {
     },[token])
 
     const handleDeleteProduct = async (productId) => {
-        const confirmed = window.confirm("Are you sure you want to delete this product?")
-        if(!confirmed) return
-        try{
+        const confirmed = window.confirm('Are you sure you want to delete this product?')
+        if (!confirmed) return
+
+        try {
             setDeletingProductID(productId)
 
-            const response = await fetch(`{API_URL}/api/products/${productId}`, {
+            const response = await fetch(`${API_URL}/api/products/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             })
-            let data
-            try{
-                data = await response.json()
-            } catch{
-                setError('Server returned invalid response')
+
+            const data = await response.json()
+
+            if (!response.ok || !data.success) {
+                setError(data.message || 'Failed to delete product')
+                return
             }
-            if(!response.ok || !data.success){
-                setError("Failed to delete product")
-            }
-            setProducts((prev)=>prev.filter(product => product.id !== productId))
-        } catch(error){
-            console.log(error)
-            setError("Something went wrong deleting product")
+
+            setProducts((prev) => prev.filter((product) => product._id !== productId))
+        } catch (error) {
+            console.log('Could not delete product:', error)
+            setError('Something went wrong deleting the product')
         } finally {
-            setDeletingProductID("")
+            setDeletingProductID('')
         }
     }
 
