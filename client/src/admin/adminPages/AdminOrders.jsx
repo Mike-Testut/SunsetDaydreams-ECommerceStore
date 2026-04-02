@@ -4,6 +4,8 @@ import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
 import AdminOrderCard from "../adminComponents/AdminOrderCard.jsx";
 import AdminStatsCards from "../adminComponents/AdminStatsCards.jsx";
+import {usePagination} from "../../utils/paginationHelper.js";
+import PageChanger from "../../components/PageChanger.jsx";
 
 const AdminOrders = () => {
     const token = useSelector(selectToken)
@@ -153,15 +155,7 @@ const AdminOrders = () => {
     }, [orders, searchTerm, statusFilter])
 
     //Pagination
-    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage)
-
-        //Set start and end index for each page
-    const paginatedOrders = useMemo(()=>{
-        const startIndex = (currentPage-1) * ordersPerPage
-        const endIndex = startIndex + ordersPerPage
-
-        return filteredOrders.slice(startIndex, endIndex)
-    }, [filteredOrders, currentPage])
+    const {totalPages,paginatedItems} = usePagination(filteredOrders, ordersPerPage, currentPage)
 
     //Get counts of each order status type for top bar
     const summaryStats = useMemo(() => {
@@ -207,7 +201,7 @@ const AdminOrders = () => {
         {filteredOrders.length === 0 ? <div className="border rounded-lg p-6 bg-white text-gray-600">
                 No orders match your current search or filter.
             </div> : <div className="flex flex-col gap-6">
-            {paginatedOrders.map((order) => (
+            {paginatedItems.map((order) => (
                 <AdminOrderCard
                     key={order._id}
                     order={order}
@@ -220,29 +214,11 @@ const AdminOrders = () => {
             ))}
             </div>}
         {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-8">
-                <button
-                    type="button"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="border px-4 py-2 rounded text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Previous
-                </button>
-
-                <p className="text-sm text-gray-600">
-                    Page {currentPage} of {totalPages}
-                </p>
-
-                <button
-                    type="button"
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="border px-4 py-2 rounded text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Next
-                </button>
-            </div>
+            <PageChanger
+                totalPages={totalPages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                />
         )}
     </div>
 }

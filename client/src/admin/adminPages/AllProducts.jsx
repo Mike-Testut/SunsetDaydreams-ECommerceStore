@@ -3,6 +3,8 @@ import {selectToken} from "../../redux/features/authSlice.js";
 import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
 import {API_URL} from "../../config/api.js";
+import {usePagination} from "../../utils/paginationHelper.js";
+import PageChanger from "../../components/PageChanger.jsx";
 
 const AllProducts = () => {
     const token = useSelector(selectToken)
@@ -14,6 +16,9 @@ const AllProducts = () => {
     const [categoryFilter, setCategoryFilter] = useState('All')
     const [subCategoryFilter, setSubCategoryFilter] = useState('All')
     const [sortOption, setSortOption] = useState('newest')
+    const [currentPage, setCurrentPage] = useState(1)
+    const productsPerPage = 15
+
 
     const categoryOptions = useMemo(() => {
         const categories = products
@@ -151,6 +156,11 @@ const AllProducts = () => {
         }
     }
 
+    const {totalPages, paginatedItems} = usePagination(filteredProducts, productsPerPage, currentPage)
+    useEffect(() => {
+        setCurrentPage(1)
+    },[searchTerm,categoryFilter,subCategoryFilter,sortOption])
+
     if (loading) {
         return <div className="p-6">Loading products...</div>
     }
@@ -228,7 +238,7 @@ const AllProducts = () => {
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
-                    {filteredProducts.map((product) => (
+                    {paginatedItems.map((product) => (
                         <div
                             key={product._id}
                             className="border rounded-lg p-4 bg-white shadow-sm flex flex-col md:flex-row md:items-center gap-4"
@@ -269,6 +279,11 @@ const AllProducts = () => {
                             </div>
                         </div>
                     ))}
+                    <PageChanger
+                        totalPages ={totalPages}
+                        currentPage = {currentPage}
+                        setCurrentPage = {setCurrentPage}
+                    />
                 </div>
             )}
         </div>
