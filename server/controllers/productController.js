@@ -6,13 +6,13 @@ const addProduct = async (req, res) => {
         const {name, description, price, category, subcategory, sizes, bestseller} = req.body;
         const uploadedImages = [];
 
-        for (const file of req.files) {
+        const files = req.files || []
+
+        for (const file of files) {
             const result = await cloudinary.uploader.upload(file.path, {
                 folder: "products"
-            });
-            uploadedImages.push(
-                result.secure_url
-            );
+            })
+            uploadedImages.push(result.secure_url)
         }
 
         const productData = {
