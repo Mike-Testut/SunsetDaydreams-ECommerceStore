@@ -13,6 +13,7 @@ const AllProducts = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [categoryFilter, setCategoryFilter] = useState('All')
     const [subCategoryFilter, setSubCategoryFilter] = useState('All')
+    const [sortOption, setSortOption] = useState('newest')
 
     const categoryOptions = useMemo(() => {
         const categories = products
@@ -42,22 +43,47 @@ const AllProducts = () => {
     const filteredProducts = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase()
 
-        return products.filter((product) => {
+        const result = products.filter((product) => {
             const matchesSearch =
                 !normalizedSearch ||
                 product.name?.toLowerCase().includes(normalizedSearch) ||
                 product.category?.toLowerCase().includes(normalizedSearch) ||
-                product.subCategory?.toLowerCase().includes(normalizedSearch)
+                product.subcategory?.toLowerCase().includes(normalizedSearch)
 
             const matchesCategory =
                 categoryFilter === 'All' || product.category === categoryFilter
 
             const matchesSubCategory =
-                subCategoryFilter === 'All' || product.subCategory === subCategoryFilter
+                subCategoryFilter === 'All' || product.subcategory === subCategoryFilter
 
             return matchesSearch && matchesCategory && matchesSubCategory
         })
-    }, [products, searchTerm, categoryFilter, subCategoryFilter])
+
+        switch (sortOption) {
+            case 'oldest':
+                return [...result].sort(
+                    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+                )
+
+            case 'price-low':
+                return [...result].sort((a, b) => a.price - b.price)
+
+            case 'price-high':
+                return [...result].sort((a, b) => b.price - a.price)
+
+            case 'name-asc':
+                return [...result].sort((a, b) => a.name.localeCompare(b.name))
+
+            case 'name-desc':
+                return [...result].sort((a, b) => b.name.localeCompare(a.name))
+
+            case 'newest':
+            default:
+                return [...result].sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                )
+        }
+    }, [products, searchTerm, categoryFilter, subCategoryFilter, sortOption])
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -162,7 +188,7 @@ const AllProducts = () => {
                 >
                     {categoryOptions.map((category) => (
                         <option key={category} value={category}>
-                            Category - {category}
+                            {category}
                         </option>
                     ))}
                 </select>
@@ -172,13 +198,27 @@ const AllProducts = () => {
                     onChange={(e) => setSubCategoryFilter(e.target.value)}
                     className="border rounded px-3 py-2 text-sm w-full lg:w-52"
                 >
-                    {subCategoryOptions.map((subCategory) => (
-                        <option key={subCategory} value={subCategory}>
-                            Subcategory - {subCategory}
+                    {subCategoryOptions.map((subcategory) => (
+                        <option key={subcategory} value={subcategory}>
+                            {subcategory}
                         </option>
                     ))}
                 </select>
+
+                <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="border rounded px-3 py-2 text-sm w-full lg:w-52"
+                >
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                    <option value="name-desc">Name: Z to A</option>
+                </select>
             </div>
+
             <p className="text-sm text-gray-500 mb-4">
                 Showing {filteredProducts.length} of {products.length} product{filteredProducts.length !== 1 ? 's' : ''}
             </p>

@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
     sizes: {type: Array, required: true},
     bestseller: {type: Boolean},
     date: {type: Date, default: Date.now},
-})
+},{timestamps: true});
 
 const ProductModel = mongoose.models.product || mongoose.model("product", productSchema);
 
