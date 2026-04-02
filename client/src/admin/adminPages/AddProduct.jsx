@@ -4,9 +4,9 @@ import ProductForm from "../adminComponents/ProductForm.jsx";
 
 const AddProduct = () => {
     return (
-        <div className='pt-10 w-full'>
-            <div className='text-center py-8 text-3xl'>
-                <Title text1='Add' text2='Product'/>
+        <div className='pt-10 w-full items-start'>
+            <div className='text-center mb-5'>
+                <h1 className="text-2xl font-medium">Add Product</h1>
             </div>
             <ProductForm />
 

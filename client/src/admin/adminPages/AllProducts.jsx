@@ -17,7 +17,7 @@ const AllProducts = () => {
     const [subCategoryFilter, setSubCategoryFilter] = useState('All')
     const [sortOption, setSortOption] = useState('newest')
     const [currentPage, setCurrentPage] = useState(1)
-    const productsPerPage = 15
+    const productsPerPage = 10
 
 
     const categoryOptions = useMemo(() => {
