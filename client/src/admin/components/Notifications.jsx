@@ -3,7 +3,7 @@ import React from 'react'
 const Notifications = () => {
     return (
         <div>
-            No Notifications
+            No New Notifications
         </div>
     )
 }
