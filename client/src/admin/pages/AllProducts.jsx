@@ -5,6 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {API_URL} from "../../config/api.js";
 import {usePagination} from "../../utils/paginationHelper.js";
 import PageChanger from "../../components/PageChanger.jsx";
+import {sortProducts} from "../../utils/sortProducts.js";
 
 const AllProducts = () => {
     const token = useSelector(selectToken)
@@ -74,31 +75,7 @@ const AllProducts = () => {
 
             return matchesSearch && matchesCategory && matchesSubCategory
         })
-
-        switch (sortOption) {
-            case 'oldest':
-                return [...result].sort(
-                    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-                )
-
-            case 'price-low':
-                return [...result].sort((a, b) => a.price - b.price)
-
-            case 'price-high':
-                return [...result].sort((a, b) => b.price - a.price)
-
-            case 'name-asc':
-                return [...result].sort((a, b) => a.name.localeCompare(b.name))
-
-            case 'name-desc':
-                return [...result].sort((a, b) => b.name.localeCompare(a.name))
-
-            case 'newest':
-            default:
-                return [...result].sort(
-                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                )
-        }
+        return sortProducts(result, sortOption)
     }, [products, searchTerm, categoryFilter, subCategoryFilter, sortOption])
 
     useEffect(() => {
