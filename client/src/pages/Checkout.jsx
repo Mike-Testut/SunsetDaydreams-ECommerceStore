@@ -47,6 +47,31 @@ const Checkout = () => {
         return getCartData(cartItems, products)
     }, [cartItems, products])
 
+    const cartDataWithStock = useMemo(() => {
+        return cartData.map((item) => {
+            const inventoryItem = item.product?.inventory?.find(
+                (entry) => entry.size === item.size
+            )
+
+            const availableStock = Number(inventoryItem?.quantity || 0)
+            const isOutOfStock = availableStock <= 0
+            const exceedsStock = item.quantity > availableStock
+
+            return {
+                ...item,
+                availableStock,
+                isOutOfStock,
+                exceedsStock,
+            }
+        })
+    }, [cartData])
+
+    const hasStockIssues = useMemo(() => {
+        return cartDataWithStock.some(
+            (item) => item.isOutOfStock || item.exceedsStock
+        )
+    }, [cartDataWithStock])
+
     const subtotal = useMemo(() => {
         return getCartSubtotal(cartData)
     }, [cartData])
@@ -61,6 +86,11 @@ const Checkout = () => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (hasStockIssues) {
+            dispatch(showToast('Some items are out of stock. Please review your cart.'))
+            navigate('/cart')
+            return
+        }
         if (cartData.length === 0) {
             dispatch(showToast('Your cart is empty'))
             navigate('/cart')
@@ -76,7 +106,7 @@ const Checkout = () => {
             const orderItems = cartData.map((item)=>({
                 productId: item.productId,
                 name: item.product.name,
-                image: item.product.image[0],
+                images: item.product.images?.[0] || "",
                 size: item.size,
                 quantity: item.quantity,
                 price: item.product.price,
@@ -121,6 +151,12 @@ const Checkout = () => {
     }
 
     return cartData.length > 0 ? (
+        <>
+        {hasStockIssues && (
+            <div className="mb-6 border border-red-200 bg-red-50 text-red-700 px-4 py-3 rounded">
+                Some items in your cart are no longer available. Please return to your cart to update them.
+            </div>
+        )}
         <form onSubmit={handleSubmit} className="pt-10">
             <div className="text-2xl mb-8">
                 <Title text1="CHECK" text2="OUT" />
@@ -281,6 +317,7 @@ const Checkout = () => {
                     >
                         <button
                             type="submit"
+                            disabled={hasStockIssues}
                             className="w-full bg-black text-white py-3 text-sm"
                         >
                             {setPaymentButtonText(paymentMethod)}
@@ -289,7 +326,7 @@ const Checkout = () => {
                 </div>
             </div>
         </form>
-
+        </>
     ):(
         <div className="pt-10">
             <div className="text-2xl mb-8">

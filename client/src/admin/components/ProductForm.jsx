@@ -1,8 +1,6 @@
 import React from 'react'
 import InventoryFields from "./InventoryFields.jsx";
-
-const CATEGORY_OPTIONS = ['Men', 'Women', 'Accessories']
-const SUBCATEGORY_OPTIONS = ['Tops', 'Bottoms', 'Outerwear', 'Swimwear', 'Hats', 'Bags']
+import {CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS} from "../utils/categoryOptions.js";
 
 const ProductForm = ({ formData, setFormData }) => {
 
