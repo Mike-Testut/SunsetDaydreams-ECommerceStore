@@ -3,10 +3,10 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Cart from "./pages/Cart.jsx";
 import Collection from "./pages/Collection.jsx";
-import AdminDashboard from "./admin/adminPages/AdminDashboard.jsx";
-import AddProduct from "./admin/adminPages/AddProduct.jsx";
+import AdminDashboard from "./admin/pages/AdminDashboard.jsx";
+import AddProduct from "./admin/pages/AddProduct.jsx";
 import StoreLayout from "./layouts/storeLayout.jsx";
-import AdminLayout from "./admin/adminLayouts/adminLayout.jsx";
+import AdminLayout from "./admin/layouts/adminLayout.jsx";
 import SearchResults from "./pages/SearchResults.jsx";
 import Product from "./pages/Product.jsx";
 import Checkout from "./pages/Checkout.jsx";
@@ -16,12 +16,12 @@ import Orders from "./pages/Orders.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import AdminRoute from "./admin/adminComponents/AdminRoute.jsx";
-import AdminOrders from "./admin/adminPages/AdminOrders.jsx";
-import AllProducts from "./admin/adminPages/AllProducts.jsx";
-import Customers from "./admin/adminPages/Customers.jsx";
+import AdminRoute from "./admin/components/AdminRoute.jsx";
+import AdminOrders from "./admin/pages/AdminOrders.jsx";
+import AllProducts from "./admin/pages/AllProducts.jsx";
+import Customers from "./admin/pages/Customers.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
-import EditProduct from "./admin/adminPages/EditProduct.jsx";
+import EditProduct from "./admin/pages/EditProduct.jsx";
 
 
 const App = () => {

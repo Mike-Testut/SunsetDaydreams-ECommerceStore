@@ -1,5 +1,5 @@
 import React from 'react'
-import {adminAssets} from "../adminAssets/adminAssets.js";
+import {adminAssets} from "../assets/adminAssets.js";
 import {assets} from "../../assets/assets.js";
 import {useSelector} from "react-redux";
 import {selectCurrentUser} from "../../redux/features/authSlice.js";

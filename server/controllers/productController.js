@@ -3,7 +3,7 @@ import ProductModel from "../models/ProductModel.js"
 
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, subcategory, sizes, bestseller } = req.body
+        const { name, description, price, category, subcategory, inventory, bestseller } = req.body
         const uploadedImages = []
         const files = req.files || []
 
@@ -20,6 +20,7 @@ const addProduct = async (req, res) => {
             })
             uploadedImages.push(result.secure_url)
         }
+        const parsedInventory = JSON.parse(inventory || "[]");
 
         const productData = {
             name,
@@ -27,7 +28,7 @@ const addProduct = async (req, res) => {
             price: Number(price),
             category,
             subcategory,
-            sizes: JSON.parse(sizes),
+            inventory: parsedInventory,
             bestseller: bestseller === "true",
             date: Date.now(),
             images: uploadedImages,
@@ -117,7 +118,7 @@ const updateProduct = async (req, res) => {
             price,
             category,
             subcategory,
-            sizes,
+            inventory,
             bestseller,
             existingImages,
         } = req.body
@@ -148,6 +149,7 @@ const updateProduct = async (req, res) => {
         }
 
         const finalImages = [...parsedExistingImages, ...uploadedImages]
+        const parsedInventory = JSON.parse(inventory || "[]");
 
         if (!finalImages.length) {
             return res.status(400).json({
@@ -161,7 +163,7 @@ const updateProduct = async (req, res) => {
         product.price = Number(price)
         product.category = category
         product.subcategory = subcategory
-        product.sizes = JSON.parse(sizes)
+        product.inventory = parsedInventory
         product.bestseller = bestseller === "true"
         product.images = finalImages
 
