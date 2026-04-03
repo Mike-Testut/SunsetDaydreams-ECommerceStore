@@ -1,12 +1,11 @@
 import React from 'react'
-import Title from "../../components/Title.jsx";
 import Notifications from "../adminComponents/Notifications.jsx";
 
 const AdminDashboard = () => {
     return (
-        <div className="items-center text-center w-full">
-            <div className='pb-2 text-3xl text-center w-full'>
-                <Title text1='Your' text2='Dashboard' />
+        <div className="mx-5">
+            <div className="mb-6">
+                <h1 className="text-2xl font-medium">Dashboard</h1>
             </div>
             <Notifications/>
 

@@ -1,13 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {selectToken} from "../../redux/features/authSlice.js";
 import {useSelector} from "react-redux";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {API_URL} from "../../config/api.js";
 import {usePagination} from "../../utils/paginationHelper.js";
 import PageChanger from "../../components/PageChanger.jsx";
 
 const AllProducts = () => {
     const token = useSelector(selectToken)
+    const navigate = useNavigate();
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
@@ -263,16 +264,20 @@ const AllProducts = () => {
                             <div className="flex gap-3">
                                 <button
                                     type="button"
-                                    className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition"
+                                    className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer"
+
+                                    onClick={() => {navigate(`/admin/products/${product._id}`)}}
                                 >
-                                    Edit
+
+                                        Edit
+
                                 </button>
 
                                 <button
                                     type="button"
                                     onClick={() => handleDeleteProduct(product._id)}
                                     disabled={deletingProductID === product._id}
-                                    className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition disabled:opacity-50"
+                                    className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition cursor-pointer disabled:opacity-50"
                                 >
                                     {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
                                 </button>
