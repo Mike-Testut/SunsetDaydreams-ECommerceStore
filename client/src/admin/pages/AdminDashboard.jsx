@@ -1,5 +1,5 @@
 import React from 'react'
-import Notifications from "../adminComponents/Notifications.jsx";
+import Notifications from "../components/Notifications.jsx";
 
 const AdminDashboard = () => {
     return (

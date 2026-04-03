@@ -1,6 +1,6 @@
 import React from 'react'
+import InventoryFields from "./InventoryFields.jsx";
 
-const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL']
 const CATEGORY_OPTIONS = ['Men', 'Women', 'Accessories']
 const SUBCATEGORY_OPTIONS = ['Tops', 'Bottoms', 'Outerwear', 'Swimwear', 'Hats', 'Bags']
 
@@ -12,17 +12,6 @@ const ProductForm = ({ formData, setFormData }) => {
         setFormData((prev) => ({
             ...prev,
             [name]: type === 'checkbox' && name === 'bestseller' ? checked : value,
-        }))
-    }
-
-    const handleSizeChange = (e) => {
-        const { value, checked } = e.target
-
-        setFormData((prev) => ({
-            ...prev,
-            sizes: checked
-                ? [...prev.sizes, value]
-                : prev.sizes.filter((size) => size !== value),
         }))
     }
 
@@ -83,9 +72,14 @@ const ProductForm = ({ formData, setFormData }) => {
                     </select>
                 </div>
             </div>
+            {/*Inventory*/}
+            <InventoryFields
+                inventory={formData.inventory}
+                setFormData={setFormData}
+            />
 
 
-            {/* Price + Sizes */}
+            {/* Price  */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium">Price</label>
@@ -96,22 +90,6 @@ const ProductForm = ({ formData, setFormData }) => {
                         onChange={handleChange}
                         className="border rounded px-3 py-2"
                     />
-                </div>
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium">Sizes</label>
-                    <div className="flex flex-wrap gap-4 h-full items-center">
-                        {SIZE_OPTIONS.map(size => (
-                            <label key={size}>
-                                <input
-                                    type="checkbox"
-                                    value={size}
-                                    checked={formData.sizes.includes(size)}
-                                    onChange={handleSizeChange}
-                                />
-                                <span> {size}</span>
-                            </label>
-                        ))}
-                    </div>
                 </div>
             </div>
             {/* Bestseller */}

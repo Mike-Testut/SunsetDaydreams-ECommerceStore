@@ -3,9 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
-import ProductForm from '../adminComponents/ProductForm.jsx'
-import ImageUploader from '../adminComponents/ImageUploader.jsx'
+import ProductForm from '../components/ProductForm.jsx'
+import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
+import {DEFAULT_INVENTORY} from "../utils/DefaultInventory.js";
 
 const EditProduct = () => {
     const { productID } = useParams()
@@ -19,7 +20,7 @@ const EditProduct = () => {
         price: '',
         category: '',
         subcategory: '',
-        sizes: [],
+        inventory: DEFAULT_INVENTORY,
         bestseller: false,
     })
 
@@ -53,7 +54,9 @@ const EditProduct = () => {
                     price: product.price || '',
                     category: product.category || '',
                     subcategory: product.subcategory || '',
-                    sizes: product.sizes || [],
+                    inventory: product.inventory && product.inventory.length > 0
+                        ? product.inventory
+                        : DEFAULT_INVENTORY,
                     bestseller: !!product.bestseller,
                 })
 

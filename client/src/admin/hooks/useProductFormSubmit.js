@@ -6,7 +6,14 @@ const validateProductForm = ({ formData, images, imageError, isEdit = false }) =
     if (!formData.price) return 'Price is required'
     if (!formData.category) return 'Category is required'
     if (!formData.subcategory) return 'Subcategory is required'
-    if (formData.sizes.length === 0) return 'Select at least one size'
+
+    const hasAnyInventory =
+        formData.inventory?.some((item) => Number(item.quantity) > 0) || false;
+
+    if (!hasAnyInventory) {
+        return "Add stock for at least one size";
+    }
+
     if (images.length === 0) {
         return isEdit ? 'At least one image is required' : 'Upload at least one image'
     }
@@ -27,7 +34,7 @@ const buildProductFormData = ({ formData, images, isEdit = false }) => {
     payload.append('price', formData.price)
     payload.append('category', formData.category)
     payload.append('subcategory', formData.subcategory)
-    payload.append('sizes', JSON.stringify(formData.sizes))
+    payload.append("inventory", JSON.stringify(formData.inventory))
     payload.append('bestseller', String(formData.bestseller))
 
     if (isEdit) {

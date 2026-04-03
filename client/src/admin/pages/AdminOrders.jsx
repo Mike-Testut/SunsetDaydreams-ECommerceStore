@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
-import AdminOrderCard from "../adminComponents/AdminOrderCard.jsx";
-import AdminStatsCards from "../adminComponents/AdminStatsCards.jsx";
+import AdminOrderCard from "../components/AdminOrderCard.jsx";
+import AdminStatsCards from "../components/AdminStatsCards.jsx";
 import {usePagination} from "../../utils/paginationHelper.js";
 import PageChanger from "../../components/PageChanger.jsx";
 

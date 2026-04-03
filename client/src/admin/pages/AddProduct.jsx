@@ -2,13 +2,14 @@ import React, { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
-import ProductForm from '../adminComponents/ProductForm.jsx'
-import ImageUploader from '../adminComponents/ImageUploader.jsx'
+import ProductForm from '../components/ProductForm.jsx'
+import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
-
+import {DEFAULT_INVENTORY} from "../utils/DefaultInventory.js";
 const AddProduct = () => {
     const token = useSelector(selectToken)
     const { submitting, submitProduct } = useProductFormSubmit()
+
 
     const [formData, setFormData] = useState({
         name: '',
@@ -16,7 +17,7 @@ const AddProduct = () => {
         price: '',
         category: '',
         subcategory: '',
-        sizes: [],
+        inventory: DEFAULT_INVENTORY,
         bestseller: false,
     })
 
@@ -34,7 +35,7 @@ const AddProduct = () => {
             price: '',
             category: '',
             subcategory: '',
-            sizes: [],
+            inventory:DEFAULT_INVENTORY,
             bestseller: false,
         })
         setImages([])
