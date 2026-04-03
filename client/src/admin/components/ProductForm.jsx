@@ -86,6 +86,7 @@ const ProductForm = ({ formData, setFormData }) => {
                     <input
                         type="number"
                         name="price"
+                        min={0}
                         value={formData.price}
                         onChange={handleChange}
                         className="border rounded px-3 py-2"
