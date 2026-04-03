@@ -6,6 +6,7 @@ import {API_URL} from "../../config/api.js";
 import {usePagination} from "../../utils/paginationHelper.js";
 import PageChanger from "../../components/PageChanger.jsx";
 import {sortProducts} from "../../utils/sortProducts.js";
+import InventoryModal from "../components/InventoryModal.jsx";
 
 const AllProducts = () => {
     const token = useSelector(selectToken)
@@ -356,55 +357,14 @@ const AllProducts = () => {
                                     {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
                                 </button>
                             </div>
-                            {inventoryModalOpen && selectedProduct && (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-                                    <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
-                                        <button
-                                            type="button"
-                                            onClick={closeInventoryModal}
-                                            className="absolute top-3 right-3 text-sm text-gray-500 hover:text-black"
-                                        >
-                                            ✕
-                                        </button>
-
-                                        <h2 className="text-xl font-medium mb-2">Restock Inventory</h2>
-                                        <p className="text-sm text-gray-500 mb-4">{selectedProduct.name}</p>
-
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                            {inventoryDraft.map((item) => (
-                                                <div key={item.size} className="flex flex-col gap-1">
-                                                    <label className="text-sm font-medium">{item.size}</label>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        value={item.quantity}
-                                                        onChange={(e) => updateDraftQuantity(item.size, e.target.value)}
-                                                        className="border rounded px-3 py-2"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex gap-3 mt-6">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleSaveInventory(selectedProduct)}
-                                                className="bg-black text-white px-4 py-2 rounded text-sm"
-                                            >
-                                                Save Inventory
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={closeInventoryModal}
-                                                className="border px-4 py-2 rounded text-sm"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            <InventoryModal
+                                open={inventoryModalOpen}
+                                product={selectedProduct}
+                                inventoryDraft={inventoryDraft}
+                                onClose={closeInventoryModal}
+                                onQuantityChange={updateDraftQuantity}
+                                onSave={() => handleSaveInventory(selectedProduct)}
+                            />
                         </div>
 
                     )})}
