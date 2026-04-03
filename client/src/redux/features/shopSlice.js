@@ -1,9 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {MockProducts} from "../../assets/MockProducts.js";
 import { loadCartFromStorage } from '../cartStorage'
 
 const initialState = {
-    products: MockProducts,
+    products: [],
     currency: '$',
     shippingFee: 10,
     search: '',
@@ -19,6 +18,9 @@ const shopSlice = createSlice({
     name: "shop",
     initialState,
     reducers: {
+        setProducts: (state, action) => {
+            state.products = action.payload
+        },
         setSearch: (state, action) => {
             state.search = action.payload
         },
@@ -45,16 +47,19 @@ const shopSlice = createSlice({
             }
         },
         updateCartQuantity: (state, action) => {
-            const {productId, size, quantity} = action.payload
+            const { productId, size, quantity } = action.payload
             if (!state.cartItems[productId]) return
 
             if (quantity <= 0) {
                 delete state.cartItems[productId][size]
+
+                if (Object.keys(state.cartItems[productId]).length === 0) {
+                    delete state.cartItems[productId]
+                }
+
+                return
             }
-            if (Object.keys(state.cartItems[productId]).length === 0) {
-                delete state.cartItems[productId]
-            }
-            state.cartItems[productId][size] = quantity;
+            state.cartItems[productId][size] = quantity
         },
         removeFromCart: (state, action) => {
             const {productId, size} = action.payload
@@ -81,6 +86,7 @@ const shopSlice = createSlice({
 })
 
 export const {
+    setProducts,
     setSearch,
     setShowSearch,
     toggleShowSearch,

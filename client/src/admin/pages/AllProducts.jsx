@@ -19,8 +19,76 @@ const AllProducts = () => {
     const [subCategoryFilter, setSubCategoryFilter] = useState('All')
     const [sortOption, setSortOption] = useState('newest')
     const [currentPage, setCurrentPage] = useState(1)
+    const [inventoryModalOpen, setInventoryModalOpen] = useState(false)
+    const [selectedProduct, setSelectedProduct] = useState(null)
+    const [inventoryDraft, setInventoryDraft] = useState([])
     const productsPerPage = 10
 
+    const openInventoryModal = (product) => {
+        setSelectedProduct(product)
+        setInventoryDraft(product.inventory || [])
+        setInventoryModalOpen(true)
+    }
+    const closeInventoryModal = () => {
+        setInventoryModalOpen(false)
+        setSelectedProduct(null)
+        setInventoryDraft([])
+    }
+
+    const updateDraftQuantity = (size, value) => {
+        const parsedValue = Math.max(0, Number(value) || 0)
+
+        setInventoryDraft((prev) =>
+            prev.map((item) =>
+                item.size === size
+                    ? { ...item, quantity: parsedValue }
+                    : item
+            )
+        )
+    }
+    const handleSaveInventory = async (product) => {
+        try {
+            const response = await fetch(`${API_URL}/api/products/update/${product._id}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: (() => {
+                    const payload = new FormData()
+                    payload.append('name', product.name)
+                    payload.append('description', product.description)
+                    payload.append('price', product.price)
+                    payload.append('category', product.category)
+                    payload.append('subcategory', product.subcategory)
+                    payload.append('inventory', JSON.stringify(inventoryDraft))
+                    payload.append('bestseller', String(product.bestseller))
+                    payload.append('existingImages', JSON.stringify(product.images || []))
+                    return payload
+                })(),
+            })
+
+            const data = await response.json()
+
+            if (!response.ok || !data.success) {
+                setError(data.message || 'Failed to update inventory')
+                return
+            }
+
+            setProducts((prev) =>
+                prev.map((item) =>
+                    item._id === product._id ? data.product : item
+                )
+            )
+
+            closeInventoryModal()
+
+            setSelectedProduct(null)
+            setInventoryDraft([])
+        } catch (error) {
+            console.log(error)
+            setError('Something went wrong updating inventory')
+        }
+    }
     const getTotalStock = (inventory = []) => {
         return inventory.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
     }
@@ -263,6 +331,13 @@ const AllProducts = () => {
                             <div className="flex gap-3">
                                 <button
                                     type="button"
+                                    onClick={() => openInventoryModal(product)}
+                                    className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition"
+                                >
+                                    Restock
+                                </button>
+                                <button
+                                    type="button"
                                     className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer"
 
                                     onClick={() => {navigate(`/admin/products/${product._id}`)}}
@@ -281,7 +356,57 @@ const AllProducts = () => {
                                     {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
                                 </button>
                             </div>
+                            {inventoryModalOpen && selectedProduct && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+                                    <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+                                        <button
+                                            type="button"
+                                            onClick={closeInventoryModal}
+                                            className="absolute top-3 right-3 text-sm text-gray-500 hover:text-black"
+                                        >
+                                            ✕
+                                        </button>
+
+                                        <h2 className="text-xl font-medium mb-2">Restock Inventory</h2>
+                                        <p className="text-sm text-gray-500 mb-4">{selectedProduct.name}</p>
+
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                            {inventoryDraft.map((item) => (
+                                                <div key={item.size} className="flex flex-col gap-1">
+                                                    <label className="text-sm font-medium">{item.size}</label>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={item.quantity}
+                                                        onChange={(e) => updateDraftQuantity(item.size, e.target.value)}
+                                                        className="border rounded px-3 py-2"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex gap-3 mt-6">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSaveInventory(selectedProduct)}
+                                                className="bg-black text-white px-4 py-2 rounded text-sm"
+                                            >
+                                                Save Inventory
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={closeInventoryModal}
+                                                className="border px-4 py-2 rounded text-sm"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
+
                     )})}
                     <PageChanger
                         totalPages ={totalPages}
@@ -289,6 +414,7 @@ const AllProducts = () => {
                         setCurrentPage = {setCurrentPage}
                     />
                 </div>
+
             )}
         </div>
     )
