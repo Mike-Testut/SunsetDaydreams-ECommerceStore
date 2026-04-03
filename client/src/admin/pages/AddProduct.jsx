@@ -5,7 +5,7 @@ import { API_URL } from '../../config/api.js'
 import ProductForm from '../components/ProductForm.jsx'
 import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
-import {DEFAULT_INVENTORY} from "../utils/DefaultInventory.js";
+import {DEFAULT_INVENTORY} from "../utils/InventoryHelpers.js";
 const AddProduct = () => {
     const token = useSelector(selectToken)
     const { submitting, submitProduct } = useProductFormSubmit()

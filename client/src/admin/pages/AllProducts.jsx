@@ -20,7 +20,17 @@ const AllProducts = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const productsPerPage = 10
 
+    const getTotalStock = (inventory = []) => {
+        return inventory.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
+    }
 
+    const getInventoryDisplay = (inventory = []) => {
+        if (!inventory.length) return '-'
+
+        return inventory
+            .map((item) => `${item.size}: ${item.quantity}`)
+            .join(' | ')
+    }
     const categoryOptions = useMemo(() => {
         const categories = products
             .map((product) => product.category)
@@ -239,7 +249,10 @@ const AllProducts = () => {
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
-                    {paginatedItems.map((product) => (
+                    {paginatedItems.map((product) =>{
+                    const totalStock = getTotalStock(product.inventory)
+
+                    return(
                         <div
                             key={product._id}
                             className="border rounded-lg p-4 bg-white shadow-sm flex flex-col md:flex-row md:items-center gap-4"
@@ -256,8 +269,17 @@ const AllProducts = () => {
                                     {product.category} · {product.subcategory}
                                 </p>
                                 <p className="text-sm text-gray-700 mt-2">${product.price?.toFixed(2)}</p>
+                                <p
+                                    className={`text-sm font-medium mt-2 ${
+                                        totalStock === 0 ? 'text-red-500' : 'text-green-600'
+                                    }`}
+                                >
+                                    {totalStock === 0
+                                        ? 'Out of Stock'
+                                        : `In Stock (${totalStock})`}
+                                </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    Sizes: {product.sizes?.join(', ') || '-'}
+                                    Inventory: {getInventoryDisplay(product.inventory)}
                                 </p>
                             </div>
 
@@ -283,7 +305,7 @@ const AllProducts = () => {
                                 </button>
                             </div>
                         </div>
-                    ))}
+                    )})}
                     <PageChanger
                         totalPages ={totalPages}
                         currentPage = {currentPage}

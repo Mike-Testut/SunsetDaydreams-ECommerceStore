@@ -6,3 +6,7 @@ export const DEFAULT_INVENTORY = [
     { size: "XL", quantity: 0 },
     { size: "XXL", quantity: 0 },
 ];
+
+export const getTotalStock =(inventory=[])=>{
+    return inventory.reduce((sum, item)=>sum+item.quantity,0)
+}
