@@ -29,6 +29,8 @@ const AdminOrderCard = ({
               </span>
                         </div>
 
+                        {/* add item count here*/}
+
                         <p className="text-sm text-gray-500">
                             Placed on {new Date(order.createdAt).toLocaleString()}
                         </p>

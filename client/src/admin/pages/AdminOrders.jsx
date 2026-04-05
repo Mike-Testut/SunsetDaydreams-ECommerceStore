@@ -6,6 +6,7 @@ import AdminOrderCard from "../components/AdminOrderCard.jsx";
 import AdminStatsCards from "../components/AdminStatsCards.jsx";
 import {usePagination} from "../../utils/paginationHelper.js";
 import PageChanger from "../../components/PageChanger.jsx";
+import {fetchAdminOrders} from "../utils/fetchAdminOrders.js";
 
 const AdminOrders = () => {
     const token = useSelector(selectToken)
@@ -26,46 +27,26 @@ const AdminOrders = () => {
 
     // Fetch All Orders
     useEffect(() => {
-        const fetchOrders = async () => {
+        const loadOrders = async () => {
             try {
-                const response = await fetch(`${API_URL}/api/order/admin/orders`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-
-                let data
-                try {
-                    data = await response.json()
-                } catch {
-                    setError('Server returned an invalid response')
-                    return
-                }
-
-                if (!response.ok || !data.success) {
-                    setError(data.message || 'Failed to load orders')
-                    return
-                }
-
-                setOrders(data.orders || [])
+                const fetchedOrders = await fetchAdminOrders(token);
+                setOrders(fetchedOrders);
             } catch (error) {
-                console.log('Could not fetch admin orders:', error)
-                setError('Something went wrong loading orders')
+                console.log('Could not fetch admin orders:', error);
+                setError(error.message || 'Something went wrong loading orders');
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
         if (!token) {
-            setLoading(false)
-            setError('You must be logged in as an admin')
-            return
+            setLoading(false);
+            setError('You must be logged in as an admin');
+            return;
         }
 
-        fetchOrders()
-    }, [token])
+        loadOrders();
+    }, [token]);
 
     //Reset to first page when search or filters changes
     useEffect(() => {
