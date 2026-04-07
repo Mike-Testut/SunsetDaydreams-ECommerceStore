@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
 import { API_URL } from '../config/api.js'
 import Title from '../components/Title.jsx'
+import { clearCart } from '../redux/features/shopSlice.js'
 
 const OrderPlaced = () => {
+  const dispatch = useDispatch()
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session_id')
 
@@ -34,6 +37,14 @@ const OrderPlaced = () => {
 
         setSessionData(data.session)
         setOrderNumber(data.orderNumber || '')
+
+        const hasPaid = data.session?.payment_status === 'paid'
+        const clearKey = sessionId ? `clearedCart:${sessionId}` : null
+
+        if (hasPaid && clearKey && !sessionStorage.getItem(clearKey)) {
+          dispatch(clearCart())
+          sessionStorage.setItem(clearKey, 'true')
+        }
       } catch (error) {
         console.log(error)
         setError('Something went wrong verifying your payment')
@@ -43,7 +54,7 @@ const OrderPlaced = () => {
     }
 
     verifySession()
-  }, [sessionId])
+  }, [dispatch, sessionId])
 
   if (loading) {
     return (
