@@ -27,7 +27,7 @@ const OrderSummary = ({
                             className="flex gap-4 border-b pb-4"
                         >
                             <img
-                                src={item.product.image[0]}
+                                src={item.product.images[0]}
                                 alt={item.product.name}
                                 className="w-16 h-16 object-cover"
                             />

@@ -6,13 +6,24 @@ import connectCloudinary from "./config/cloudinary.js";
 import userRouter from "./routes/userRoute.js";
 import productRouter from "./routes/productRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+import {handleStripeWebhook} from "./controllers/orderController.js";
+
 
 //App Config
 
 const app = express()
 const port = process.env.PORT || 3000
+
 connectDB();
 connectCloudinary();
+
+
+//Stripe Webhook
+app.post(
+    '/api/order/stripe/webhook',
+    express.raw({type: 'application/json'}),
+    handleStripeWebhook
+)
 
 //Middleware
 app.use(cors())
