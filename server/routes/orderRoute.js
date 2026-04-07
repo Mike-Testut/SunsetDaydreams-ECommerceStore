@@ -1,9 +1,9 @@
 import express from 'express';
 import {
-    createOrder,
+    createOrder, createStripeCheckoutSession,
     getAllOrders,
     getOrderByOrderId,
-    getOrdersByUser,
+    getOrdersByUser, getStripeCheckoutSession,
     updateOrderStatus
 } from "../controllers/orderController.js";
 import protect from "../middleware/authMiddleware.js";
@@ -13,10 +13,11 @@ import optionalAuth from "../middleware/optionalAuth.js";
 const orderRouter = express.Router();
 
 orderRouter.post('/create',optionalAuth, createOrder);
+orderRouter.post('/stripe/create-checkout-session', optionalAuth, createStripeCheckoutSession);
+orderRouter.get('/stripe/session/:sessionId', getStripeCheckoutSession);
 orderRouter.get('/ordersbyuser', protect, getOrdersByUser);
 orderRouter.get('/orderbyid', getOrderByOrderId);
 orderRouter.get('/admin/orders', protect, adminOnly, getAllOrders);
 orderRouter.patch('/admin/:orderId/status', protect, adminOnly, updateOrderStatus);
 
 export default orderRouter;
-

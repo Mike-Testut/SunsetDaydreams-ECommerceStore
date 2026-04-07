@@ -1,13 +1,13 @@
-import React, {useMemo, useState} from 'react'
-import {useDispatch, useSelector} from "react-redux";
-import {Link, useNavigate} from "react-router-dom";
-import {getCartData, getCartSubtotal, getCartTotal} from "../utils/cartHelpers.js";
-import {clearCart, showToast} from "../redux/features/shopSlice.js";
+import React, { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { getCartData, getCartSubtotal, getCartTotal } from "../utils/cartHelpers.js";
+import { showToast } from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
 import OrderSummary from "../components/OrderSummary.jsx";
-import {assets} from "../assets/assets.js";
-import {API_URL} from "../config/api.js";
-import {selectToken} from "../redux/features/authSlice.js";
+import { assets } from "../assets/assets.js";
+import { API_URL } from "../config/api.js";
+import { selectToken } from "../redux/features/authSlice.js";
 
 const Checkout = () => {
     const dispatch = useDispatch();
@@ -31,46 +31,24 @@ const Checkout = () => {
         country: '',
     })
 
-    const [paymentMethod, setPaymentMethod] = useState('cc')
+    const [paymentMethod, setPaymentMethod] = useState('stripe')
+    const [submitting, setSubmitting] = useState(false)
 
-    const setPaymentButtonText = ((paymentMethod)=>{
+    const setPaymentButtonText = (paymentMethod) => {
         switch (paymentMethod) {
-            case 'cc':
-                return "PLACE ORDER"
             case 'stripe':
                 return "CONTINUE TO STRIPE"
             case 'paypal':
                 return "CONTINUE TO PAYPAL"
+            case 'cc':
+            default:
+                return "PLACE ORDER"
         }
-    })
+    }
+
     const cartData = useMemo(() => {
         return getCartData(cartItems, products)
     }, [cartItems, products])
-
-    const cartDataWithStock = useMemo(() => {
-        return cartData.map((item) => {
-            const inventoryItem = item.product?.inventory?.find(
-                (entry) => entry.size === item.size
-            )
-
-            const availableStock = Number(inventoryItem?.quantity || 0)
-            const isOutOfStock = availableStock <= 0
-            const exceedsStock = item.quantity > availableStock
-
-            return {
-                ...item,
-                availableStock,
-                isOutOfStock,
-                exceedsStock,
-            }
-        })
-    }, [cartData])
-
-    const hasStockIssues = useMemo(() => {
-        return cartDataWithStock.some(
-            (item) => item.isOutOfStock || item.exceedsStock
-        )
-    }, [cartDataWithStock])
 
     const subtotal = useMemo(() => {
         return getCartSubtotal(cartData)
@@ -81,40 +59,43 @@ const Checkout = () => {
     }, [subtotal, shippingFee, cartData])
 
     const handleChange = (e) => {
-        const {name, value} = e.target
-        setFormData((prev) => ({...prev, [name]: value}))
+        const { name, value } = e.target
+        setFormData((prev) => ({ ...prev, [name]: value }))
     }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (hasStockIssues) {
-            dispatch(showToast('Some items are out of stock. Please review your cart.'))
-            navigate('/cart')
-            return
-        }
+
         if (cartData.length === 0) {
             dispatch(showToast('Your cart is empty'))
             navigate('/cart')
             return
         }
 
-        if(paymentMethod !== 'cc'){
-            dispatch(showToast('Payment meth not currently supported'))
+        if (paymentMethod === 'paypal') {
+            dispatch(showToast('PayPal is not currently supported'))
             return
         }
 
-        try{
-            const orderItems = cartData.map((item)=>({
+        if (paymentMethod === 'cc') {
+            dispatch(showToast('Credit card form is not built yet. Please use Stripe.'))
+            return
+        }
+
+        try {
+            setSubmitting(true)
+
+            const orderItems = cartData.map((item) => ({
                 productId: item.productId,
                 name: item.product.name,
-                images: item.product.images?.[0] || "",
+                image: item.product.images?.[0] || '',
                 size: item.size,
                 quantity: item.quantity,
                 price: item.product.price,
-                })
-            )
-
+            }))
+            console.log('orderItems being sent:', orderItems)
             const response = await fetch(
-                `${API_URL}/api/order/create`,
+                `${API_URL}/api/order/stripe/create-checkout-session`,
                 {
                     method: 'POST',
                     headers: {
@@ -124,39 +105,31 @@ const Checkout = () => {
                     body: JSON.stringify({
                         items: orderItems,
                         shippingAddress: formData,
-                        paymentMethod,
                         subtotal,
                         shippingFee,
                         tax: 0,
                         total,
                     })
-                },
-                true
+                }
             )
 
             const data = await response.json();
 
-            if (!response.ok || !data.success) {
-                dispatch(showToast(data.message || 'Failed to place order'))
+            if (!response.ok || !data.success || !data.url) {
+                dispatch(showToast(data.message || 'Failed to start Stripe checkout'))
                 return
             }
-            dispatch(clearCart())
-            dispatch(showToast('Order placed successfully'))
-            navigate('/orderplaced')
 
-        } catch(error) {
-            console.log("could not create order", error)
-            dispatch(showToast('Something went wrong placing your order'))
+            window.location.href = data.url
+        } catch (error) {
+            console.log("could not start checkout", error)
+            dispatch(showToast('Something went wrong starting checkout'))
+        } finally {
+            setSubmitting(false)
         }
     }
 
     return cartData.length > 0 ? (
-        <>
-        {hasStockIssues && (
-            <div className="mb-6 border border-red-200 bg-red-50 text-red-700 px-4 py-3 rounded">
-                Some items in your cart are no longer available. Please return to your cart to update them.
-            </div>
-        )}
         <form onSubmit={handleSubmit} className="pt-10">
             <div className="text-2xl mb-8">
                 <Title text1="CHECK" text2="OUT" />
@@ -270,20 +243,20 @@ const Checkout = () => {
                                 <input
                                     type="radio"
                                     name="payment"
-                                    checked={paymentMethod === 'cc'}
-                                    onChange={() => setPaymentMethod('cc')}
+                                    checked={paymentMethod === 'stripe'}
+                                    onChange={() => setPaymentMethod('stripe')}
                                 />
-                                <span>Credit Card (coming soon)</span>
+                                <span><img src={assets.stripe_logo} alt='stripe logo' className="h-6" /></span>
                             </label>
 
                             <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
                                 <input
                                     type="radio"
                                     name="payment"
-                                    checked={paymentMethod === 'stripe'}
-                                    onChange={() => setPaymentMethod('stripe')}
+                                    checked={paymentMethod === 'cc'}
+                                    onChange={() => setPaymentMethod('cc')}
                                 />
-                                <span><img src={assets.stripe_logo} alt='stripe logo' className="h-6" /></span>
+                                <span>Credit Card Form (not enabled yet)</span>
                             </label>
 
                             <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
@@ -297,12 +270,12 @@ const Checkout = () => {
                             </label>
                         </div>
                     </div>
+
                     {paymentMethod === 'cc' && (
                         <div className='my-10'>
                             CC FORM COMING SOON
                         </div>
                     )}
-
                 </div>
 
                 <div className="w-full lg:w-105">
@@ -317,17 +290,17 @@ const Checkout = () => {
                     >
                         <button
                             type="submit"
-                            disabled={hasStockIssues}
-                            className="w-full bg-black text-white py-3 text-sm"
+                            disabled={submitting}
+                            className="w-full bg-black text-white py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {setPaymentButtonText(paymentMethod)}
+                            {submitting ? 'LOADING...' : setPaymentButtonText(paymentMethod)}
                         </button>
                     </OrderSummary>
                 </div>
             </div>
         </form>
-        </>
-    ):(
+
+    ) : (
         <div className="pt-10">
             <div className="text-2xl mb-8">
                 <Title text1="CHECK" text2="OUT" />
@@ -345,4 +318,5 @@ const Checkout = () => {
         </div>
     )
 }
+
 export default Checkout
