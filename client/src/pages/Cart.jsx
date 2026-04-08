@@ -18,12 +18,15 @@ const Cart = () => {
   const shippingFee = useSelector(state => state.shop.shippingFee)
 
   const cartData = useMemo(() => {
-    return getCartData(cartItems, products)
-  }, [cartItems, products])
+    return getCartData(cartItems)
+  }, [cartItems])
 
   const cartDataWithStock = useMemo(() => {
     return cartData.map((item) => {
-      const inventoryItem = item.product?.inventory?.find(
+      const product = products.find((product) => product._id === item.productId)
+      if(!product) return null
+
+      const inventoryItem = product.inventory?.find(
           (entry) => entry.size === item.size
       )
 
@@ -33,20 +36,21 @@ const Cart = () => {
 
       return {
         ...item,
+        product,
         availableStock,
         isOutOfStock,
         exceedsStock,
       }
-    })
-  }, [cartData])
+    }).filter(Boolean)
+  }, [cartData,products])
 
   const hasCartIssues = useMemo(() => {
     return cartDataWithStock.some((item) => item.isOutOfStock || item.exceedsStock)
   }, [cartDataWithStock])
 
   const subtotal = useMemo(() => {
-    return getCartSubtotal(cartDataWithStock)
-  }, [cartDataWithStock])
+    return getCartSubtotal(cartData, products)
+  }, [cartData, products])
 
   const total = useMemo(() => {
     return getCartTotal(subtotal, shippingFee, cartDataWithStock.length > 0)
