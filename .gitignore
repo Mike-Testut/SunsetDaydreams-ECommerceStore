@@ -1,3 +1,6 @@
 .env
 /.env
 /Users/michaeltestut/Documents/CodingPortfolioProjects/SunsetDaydreams/server/.env
+
+.DS_Store
+__MACOSX

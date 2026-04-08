@@ -47,12 +47,27 @@ const Checkout = () => {
     }
 
     const cartData = useMemo(() => {
-        return getCartData(cartItems, products)
-    }, [cartItems, products])
+        return getCartData(cartItems)
+    }, [cartItems])
+
+    const cartDisplayData = useMemo(() => {
+        return cartData
+            .map((item) => {
+                const product = products.find((product) => product._id === item.productId)
+
+                if (!product) return null
+
+                return {
+                    ...item,
+                    product,
+                }
+            })
+            .filter(Boolean)
+    }, [cartData, products])
 
     const subtotal = useMemo(() => {
-        return getCartSubtotal(cartData)
-    }, [cartData])
+        return getCartSubtotal(cartData,products)
+    }, [cartData,products])
 
     const total = useMemo(() => {
         return getCartTotal(subtotal, shippingFee, cartData.length > 0)
@@ -66,7 +81,7 @@ const Checkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (cartData.length === 0) {
+        if (cartDisplayData.length === 0) {
             dispatch(showToast('Your cart is empty'))
             navigate('/cart')
             return
@@ -87,11 +102,8 @@ const Checkout = () => {
 
             const orderItems = cartData.map((item) => ({
                 productId: item.productId,
-                name: item.product.name,
-                image: item.product.images?.[0] || '',
                 size: item.size,
                 quantity: item.quantity,
-                price: item.product.price,
             }))
             console.log('orderItems being sent:', orderItems)
             const response = await fetch(
@@ -129,7 +141,7 @@ const Checkout = () => {
         }
     }
 
-    return cartData.length > 0 ? (
+    return cartDisplayData.length > 0 ? (
         <form onSubmit={handleSubmit} className="pt-10">
             <div className="text-2xl mb-8">
                 <Title text1="CHECK" text2="OUT" />
@@ -285,7 +297,7 @@ const Checkout = () => {
                         shippingFee={shippingFee}
                         total={total}
                         title="Order Summary"
-                        items={cartData}
+                        items={cartDisplayData}
                         showItems={true}
                     >
                         <button
