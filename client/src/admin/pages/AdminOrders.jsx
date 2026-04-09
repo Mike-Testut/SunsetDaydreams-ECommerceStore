@@ -1,22 +1,35 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
-import { API_URL } from '../../config/api.js'
-import AdminOrderCard from "../components/AdminOrderCard.jsx";
-import AdminStatsCards from "../components/AdminStatsCards.jsx";
-import {usePagination} from "../../utils/paginationHelper.js";
-import PageChanger from "../../components/PageChanger.jsx";
-import {fetchAdminOrders} from "../utils/fetchAdminOrders.js";
+import AdminOrderCard from "../components/AdminOrderCard.jsx"
+import AdminStatsCards from "../components/AdminStatsCards.jsx"
+import { usePagination } from "../../utils/paginationHelper.js"
+import PageChanger from "../../components/PageChanger.jsx"
+import { useAdminOrders } from '../hooks/useAdminOrders.js'
+import { useOrderFilters } from '../hooks/useOrderFilters.js'
+import { useOrderStats } from '../hooks/useOrderStats.js'
 
 const AdminOrders = () => {
     const token = useSelector(selectToken)
 
-    const [orders, setOrders] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
-    const [updatingOrderId, setUpdatingOrderId] = useState('')
-    const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState('All')
+    const {
+        orders,
+        loading,
+        error,
+        updatingOrderId,
+        handleStatusChange,
+    } = useAdminOrders(token)
+
+    const {
+        searchTerm,
+        setSearchTerm,
+        statusFilter,
+        setStatusFilter,
+        filteredOrders,
+    } = useOrderFilters(orders)
+
+    const summaryStats = useOrderStats(orders)
+
     const [expandedOrderId, setExpandedOrderId] = useState(null)
     const [currentPage, setCurrentPage] = useState(1)
     const ordersPerPage = 5
@@ -25,74 +38,10 @@ const AdminOrders = () => {
         setExpandedOrderId((prev) => (prev === orderId ? null : orderId))
     }
 
-    // Fetch All Orders
-    useEffect(() => {
-        const loadOrders = async () => {
-            try {
-                const fetchedOrders = await fetchAdminOrders(token);
-                setOrders(fetchedOrders);
-            } catch (error) {
-                console.log('Could not fetch admin orders:', error);
-                setError(error.message || 'Something went wrong loading orders');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (!token) {
-            setLoading(false);
-            setError('You must be logged in as an admin');
-            return;
-        }
-
-        loadOrders();
-    }, [token]);
-
-    //Reset to first page when search or filters changes
     useEffect(() => {
         setCurrentPage(1)
-    },[searchTerm, statusFilter])
+    }, [searchTerm, statusFilter])
 
-    const handleStatusChange = async (orderId, newStatus) => {
-        try {
-            setUpdatingOrderId(orderId)
-
-            const response = await fetch(`${API_URL}/api/order/admin/${orderId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ status: newStatus }),
-            })
-
-            let data
-            try {
-                data = await response.json()
-            } catch {
-                setError('Server returned an invalid response')
-                return
-            }
-
-            if (!response.ok || !data.success) {
-                setError(data.message || 'Failed to update order status')
-                return
-            }
-
-            setOrders((prevOrders) =>
-                prevOrders.map((order) =>
-                    order._id === orderId ? { ...order, status: newStatus } : order
-                )
-            )
-        } catch (error) {
-            console.log('Could not update order status:', error)
-            setError('Something went wrong updating the order')
-        } finally {
-            setUpdatingOrderId('')
-        }
-    }
-
-    //Set badge colors when status changes
     const getStatusBadgeClasses = (status) => {
         switch (status) {
             case 'Order Placed':
@@ -110,46 +59,11 @@ const AdminOrders = () => {
         }
     }
 
-    //Filter Orders based on status
-    const filteredOrders = useMemo(() => {
-        const normalizedSearch = searchTerm.trim().toLowerCase()
-
-        return orders.filter((order) => {
-            const matchesStatus =
-                statusFilter === 'All' ? true : order.status === statusFilter
-
-            const customerName = order.user?.name || 'Guest'
-            const customerEmail = order.user?.email || order.shippingAddress?.email || ''
-            const orderNumber = order.orderNumber || ''
-            const shippingName =
-                `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim()
-
-            const matchesSearch =
-                !normalizedSearch ||
-                orderNumber.toLowerCase().includes(normalizedSearch) ||
-                customerName.toLowerCase().includes(normalizedSearch) ||
-                customerEmail.toLowerCase().includes(normalizedSearch) ||
-                shippingName.toLowerCase().includes(normalizedSearch)
-
-            return matchesStatus && matchesSearch
-        })
-    }, [orders, searchTerm, statusFilter])
-
-    //Pagination
-    const {totalPages,paginatedItems} = usePagination(filteredOrders, ordersPerPage, currentPage)
-
-    //Get counts of each order status type for top bar
-    const summaryStats = useMemo(() => {
-        return {
-            total: orders.length,
-            orderPlaced: orders.filter((order) => order.status === 'Order Placed').length,
-            processing: orders.filter((order) => order.status === 'Processing').length,
-            shipped: orders.filter((order) => order.status === 'Shipped').length,
-            delivered: orders.filter((order) => order.status === 'Delivered').length,
-            cancelled: orders.filter((order) => order.status === 'Cancelled').length,
-        }
-    }, [orders])
-
+    const { totalPages, paginatedItems } = usePagination(
+        filteredOrders,
+        ordersPerPage,
+        currentPage
+    )
 
     if (loading) {
         return <div className="p-6">Loading orders...</div>
@@ -159,49 +73,57 @@ const AdminOrders = () => {
         return <div className="p-6 text-red-500">{error}</div>
     }
 
-    return <div className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center  gap-4 mb-6">
-            <h1 className="text-2xl font-medium">Orders</h1>
+    return (
+        <div className="p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
+                <h1 className="text-2xl font-medium">Orders</h1>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-                <input
-                    type="text"
-                    placeholder="Search by order #, customer, or email"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border rounded px-3 py-2 text-sm w-full sm:w-80"
-                />
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                        type="text"
+                        placeholder="Search by order #, customer, or email"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="border rounded px-3 py-2 text-sm w-full sm:w-80"
+                    />
+                </div>
             </div>
-        </div>
-        <AdminStatsCards
-            summaryStats={summaryStats}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-        />
 
-        {filteredOrders.length === 0 ? <div className="border rounded-lg p-6 bg-white text-gray-600">
-                No orders match your current search or filter.
-            </div> : <div className="flex flex-col gap-6">
-            {paginatedItems.map((order) => (
-                <AdminOrderCard
-                    key={order._id}
-                    order={order}
-                    expandedOrderId={expandedOrderId}
-                    toggleOrderExpansion={toggleOrderExpansion}
-                    updatingOrderId={updatingOrderId}
-                    handleStatusChange={handleStatusChange}
-                    getStatusBadgeClasses={getStatusBadgeClasses}
+            <AdminStatsCards
+                summaryStats={summaryStats}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+            />
+
+            {filteredOrders.length === 0 ? (
+                <div className="border rounded-lg p-6 bg-white text-gray-600">
+                    No orders match your current search or filter.
+                </div>
+            ) : (
+                <div className="flex flex-col gap-6">
+                    {paginatedItems.map((order) => (
+                        <AdminOrderCard
+                            key={order._id}
+                            order={order}
+                            expandedOrderId={expandedOrderId}
+                            toggleOrderExpansion={toggleOrderExpansion}
+                            updatingOrderId={updatingOrderId}
+                            handleStatusChange={handleStatusChange}
+                            getStatusBadgeClasses={getStatusBadgeClasses}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {totalPages > 1 && (
+                <PageChanger
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
                 />
-            ))}
-            </div>}
-        {totalPages > 1 && (
-            <PageChanger
-                totalPages={totalPages}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                />
-        )}
-    </div>
+            )}
+        </div>
+    )
 }
 
 export default AdminOrders
