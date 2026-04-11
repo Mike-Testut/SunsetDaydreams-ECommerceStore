@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import {selectToken} from "../../redux/features/authSlice.js";
 import {fetchAdminOrders} from "../utils/fetchAdminOrders.js";
 import {filterOrdersByRange, getRevenueStats} from "../utils/orderAnalytics.js";
-import CustomDateRangeModal from "../components/customDateRangeModal.jsx";
+import CustomDateRangeModal from "../components/CustomDateRangeModal.jsx";
 
 const AdminDashboard = () => {
     const token = useSelector(selectToken);

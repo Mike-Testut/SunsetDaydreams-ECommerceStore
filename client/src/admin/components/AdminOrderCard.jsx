@@ -1,4 +1,5 @@
 import React from 'react'
+import {getStatusBadgeClasses} from "../utils/orderStatusStyles.js";
 
 const AdminOrderCard = ({
                             order,
@@ -6,7 +7,6 @@ const AdminOrderCard = ({
                             toggleOrderExpansion,
                             updatingOrderId,
                             handleStatusChange,
-                            getStatusBadgeClasses,
                         }) => {
 
     const isExpanded = expandedOrderId === order._id

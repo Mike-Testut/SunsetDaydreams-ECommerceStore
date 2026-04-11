@@ -1,16 +1,17 @@
-import React, {useEffect, useMemo, useState} from 'react'
-import {selectToken} from "../../redux/features/authSlice.js";
-import {useSelector} from "react-redux";
-import {Link, useNavigate} from "react-router-dom";
-import {API_URL} from "../../config/api.js";
-import {usePagination} from "../../utils/paginationHelper.js";
-import PageChanger from "../../components/PageChanger.jsx";
-import {sortProducts} from "../../utils/sortProducts.js";
-import InventoryModal from "../components/InventoryModal.jsx";
+import React, { useEffect, useMemo, useState } from 'react'
+import { selectToken } from "../../redux/features/authSlice.js"
+import { useSelector } from "react-redux"
+import { Link, useNavigate } from "react-router-dom"
+import { API_URL } from "../../config/api.js"
+import { usePagination } from "../../hooks/usePagination.js"
+import PageChanger from "../../components/PageChanger.jsx"
+import { sortProducts } from "../../utils/sortProducts.js"
+import InventoryModal from "../components/InventoryModal.jsx"
 
 const AllProducts = () => {
     const token = useSelector(selectToken)
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
@@ -19,11 +20,11 @@ const AllProducts = () => {
     const [categoryFilter, setCategoryFilter] = useState('All')
     const [subCategoryFilter, setSubCategoryFilter] = useState('All')
     const [sortOption, setSortOption] = useState('newest')
-    const [currentPage, setCurrentPage] = useState(1)
     const [inventoryModalOpen, setInventoryModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [inventoryDraft, setInventoryDraft] = useState([])
     const [savingInventory, setSavingInventory] = useState(false)
+
     const productsPerPage = 10
 
     const openInventoryModal = (product) => {
@@ -31,6 +32,7 @@ const AllProducts = () => {
         setInventoryDraft(product.inventory || [])
         setInventoryModalOpen(true)
     }
+
     const closeInventoryModal = () => {
         setInventoryModalOpen(false)
         setSelectedProduct(null)
@@ -48,6 +50,7 @@ const AllProducts = () => {
             )
         )
     }
+
     const handleSaveInventory = async (product) => {
         try {
             setSavingInventory(true)
@@ -85,7 +88,6 @@ const AllProducts = () => {
             )
 
             closeInventoryModal()
-
         } catch (error) {
             console.log(error)
             setError('Something went wrong updating inventory')
@@ -105,6 +107,7 @@ const AllProducts = () => {
             .map((item) => `${item.size}: ${item.quantity}`)
             .join(' | ')
     }
+
     const categoryOptions = useMemo(() => {
         const categories = products
             .map((product) => product.category)
@@ -148,12 +151,13 @@ const AllProducts = () => {
 
             return matchesSearch && matchesCategory && matchesSubCategory
         })
+
         return sortProducts(result, sortOption)
     }, [products, searchTerm, categoryFilter, subCategoryFilter, sortOption])
 
     useEffect(() => {
         const fetchProducts = async () => {
-            try{
+            try {
                 const response = await fetch(`${API_URL}/api/products/all`, {
                     method: 'GET',
                     headers: {
@@ -161,15 +165,20 @@ const AllProducts = () => {
                         Authorization: `Bearer ${token}`
                     }
                 })
+
                 let data
-                try{
+                try {
                     data = await response.json()
-                } catch{
+                } catch {
                     setError('Server returned invalid response')
+                    return
                 }
-                if(!response.ok || !data.success){
+
+                if (!response.ok || !data.success) {
                     setError("Failed to fetch products")
+                    return
                 }
+
                 setProducts(data.products || [])
             } catch (error) {
                 console.log(error)
@@ -178,13 +187,15 @@ const AllProducts = () => {
                 setLoading(false)
             }
         }
+
         if (!token) {
             setLoading(false)
             setError('You must be logged in as an admin')
             return
         }
+
         fetchProducts()
-    },[token])
+    }, [token])
 
     const handleDeleteProduct = async (productId) => {
         const confirmed = window.confirm('Are you sure you want to delete this product?')
@@ -217,10 +228,17 @@ const AllProducts = () => {
         }
     }
 
-    const {totalPages, paginatedItems} = usePagination(filteredProducts, productsPerPage, currentPage)
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems,
+        resetPage,
+    } = usePagination(filteredProducts, productsPerPage)
+
     useEffect(() => {
-        setCurrentPage(1)
-    },[searchTerm,categoryFilter,subCategoryFilter,sortOption])
+        resetPage()
+    }, [searchTerm, categoryFilter, subCategoryFilter, sortOption, resetPage])
 
     if (loading) {
         return <div className="p-6">Loading products...</div>
@@ -293,95 +311,96 @@ const AllProducts = () => {
             <p className="text-sm text-gray-500 mb-4">
                 Showing {filteredProducts.length} of {products.length} product{filteredProducts.length !== 1 ? 's' : ''}
             </p>
+
             {filteredProducts.length === 0 ? (
                 <div className="border rounded-lg p-6 bg-white text-gray-600">
                     No products found.
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
-                    {paginatedItems.map((product) =>{
-                    const totalStock = getTotalStock(product.inventory)
+                    {paginatedItems.map((product) => {
+                        const totalStock = getTotalStock(product.inventory)
 
-                    return(
-                        <div
-                            key={product._id}
-                            className="border rounded-lg p-4 bg-white shadow-sm flex flex-col md:flex-row md:items-center gap-4"
-                        >
-                            <img
-                                src={product.images?.[0]}
-                                alt={product.name}
-                                className="w-24 h-24 object-cover rounded border"
-                            />
+                        return (
+                            <div
+                                key={product._id}
+                                className="border rounded-lg p-4 bg-white shadow-sm flex flex-col md:flex-row md:items-center gap-4"
+                            >
+                                <img
+                                    src={product.images?.[0]}
+                                    alt={product.name}
+                                    className="w-24 h-24 object-cover rounded border"
+                                />
 
-                            <div className="flex-1">
-                                <p className="font-medium text-lg">{product.name}</p>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    {product.category} · {product.subcategory}
-                                </p>
-                                <p className="text-sm text-gray-700 mt-2">${product.price?.toFixed(2)}</p>
-                                <p
-                                    className={`text-sm font-medium mt-2 ${
-                                        totalStock === 0 ? 'text-red-500' : 'text-green-600'
-                                    }`}
-                                >
-                                    {totalStock === 0
-                                        ? 'Out of Stock'
-                                        : `In Stock (${totalStock})`}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Inventory: {getInventoryDisplay(product.inventory)}
-                                </p>
-                            </div>
+                                <div className="flex-1">
+                                    <p className="font-medium text-lg">{product.name}</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        {product.category} · {product.subcategory}
+                                    </p>
+                                    <p className="text-sm text-gray-700 mt-2">${product.price?.toFixed(2)}</p>
+                                    <p
+                                        className={`text-sm font-medium mt-2 ${
+                                            totalStock === 0 ? 'text-red-500' : 'text-green-600'
+                                        }`}
+                                    >
+                                        {totalStock === 0 ? 'Out of Stock' : `In Stock (${totalStock})`}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Inventory: {getInventoryDisplay(product.inventory)}
+                                    </p>
+                                </div>
 
-                            <div className="flex gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => openInventoryModal(product)}
-                                    className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition"
-                                >
-                                    Restock
-                                </button>
-                                <button
-                                    type="button"
-                                    className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer"
+                                <div className="flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => openInventoryModal(product)}
+                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition"
+                                    >
+                                        Restock
+                                    </button>
 
-                                    onClick={() => {navigate(`/admin/products/${product._id}`)}}
-                                >
-
+                                    <button
+                                        type="button"
+                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer"
+                                        onClick={() => navigate(`/admin/products/${product._id}`)}
+                                    >
                                         Edit
+                                    </button>
 
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => handleDeleteProduct(product._id)}
-                                    disabled={deletingProductID === product._id}
-                                    className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition cursor-pointer disabled:opacity-50"
-                                >
-                                    {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
-                                </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeleteProduct(product._id)}
+                                        disabled={deletingProductID === product._id}
+                                        className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition cursor-pointer disabled:opacity-50"
+                                    >
+                                        {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
+                                    </button>
+                                </div>
                             </div>
-                            <InventoryModal
-                                open={inventoryModalOpen}
-                                product={selectedProduct}
-                                inventoryDraft={inventoryDraft}
-                                onClose={closeInventoryModal}
-                                onQuantityChange={updateDraftQuantity}
-                                onSave={() => handleSaveInventory(selectedProduct)}
-                                saving={savingInventory}
-                            />
-                        </div>
+                        )
+                    })}
 
-                    )})}
-                    <PageChanger
-                        totalPages ={totalPages}
-                        currentPage = {currentPage}
-                        setCurrentPage = {setCurrentPage}
-                    />
+                    {totalPages > 1 && (
+                        <PageChanger
+                            totalPages={totalPages}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                        />
+                    )}
                 </div>
-
             )}
+
+            <InventoryModal
+                open={inventoryModalOpen}
+                product={selectedProduct}
+                inventoryDraft={inventoryDraft}
+                onClose={closeInventoryModal}
+                onQuantityChange={updateDraftQuantity}
+                onSave={() => handleSaveInventory(selectedProduct)}
+                saving={savingInventory}
+            />
         </div>
     )
 }
+
 export default AllProducts
