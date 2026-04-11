@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-// import RelatedProducts from "../components/RelatedProducts.jsx"
 import { addToCart, showToast } from "../redux/features/shopSlice.js"
+import RecommendedProducts from "../components/RecommendedProducts.jsx";
+import {getRecommendedProducts} from "../utils/getRecommendedProducts.js";
+
 
 const Product = () => {
     const { productId } = useParams()
@@ -21,7 +23,12 @@ const Product = () => {
             setProductData(product)
             setImage(product.images?.[0] || "")
         }
+
     }, [productId, products])
+
+    const recommendedProducts = useMemo(() => {
+        return getRecommendedProducts(productData, products, 4)
+    }, [productData, products])
 
     const availableInventory = useMemo(() => {
         return productData?.inventory || []
@@ -161,10 +168,10 @@ const Product = () => {
             </div>
 
             {/* Display Related Products */}
-            {/*<RelatedProducts*/}
-            {/*    category={productData.category}*/}
-            {/*    subcategory={productData.subcategory}*/}
-            {/*/>*/}
+            <RecommendedProducts
+            tile="You might also like"
+            products={recommendedProducts}
+            />
         </div>
     )
 }
