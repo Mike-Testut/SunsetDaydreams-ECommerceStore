@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import AdminOrderCard from "../components/AdminOrderCard.jsx"
 import AdminStatsCards from "../components/AdminStatsCards.jsx"
-import { usePagination } from "../../utils/paginationHelper.js"
+import { usePagination } from "../../hooks/usePagination.js"
 import PageChanger from "../../components/PageChanger.jsx"
 import { useAdminOrders } from '../hooks/useAdminOrders.js'
 import { useOrderFilters } from '../hooks/useOrderFilters.js'
@@ -31,39 +31,24 @@ const AdminOrders = () => {
     const summaryStats = useOrderStats(orders)
 
     const [expandedOrderId, setExpandedOrderId] = useState(null)
-    const [currentPage, setCurrentPage] = useState(1)
     const ordersPerPage = 5
+
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems,
+        resetPage,
+    } = usePagination(filteredOrders, ordersPerPage)
 
     const toggleOrderExpansion = (orderId) => {
         setExpandedOrderId((prev) => (prev === orderId ? null : orderId))
     }
 
     useEffect(() => {
-        setCurrentPage(1)
-    }, [searchTerm, statusFilter])
-
-    const getStatusBadgeClasses = (status) => {
-        switch (status) {
-            case 'Order Placed':
-                return 'bg-gray-100 text-gray-700 border-gray-200'
-            case 'Processing':
-                return 'bg-blue-100 text-blue-700 border-blue-200'
-            case 'Shipped':
-                return 'bg-purple-100 text-purple-700 border-purple-200'
-            case 'Delivered':
-                return 'bg-green-100 text-green-700 border-green-200'
-            case 'Cancelled':
-                return 'bg-red-100 text-red-700 border-red-200'
-            default:
-                return 'bg-gray-100 text-gray-700 border-gray-200'
-        }
-    }
-
-    const { totalPages, paginatedItems } = usePagination(
-        filteredOrders,
-        ordersPerPage,
-        currentPage
-    )
+        resetPage()
+        setExpandedOrderId(null)
+    }, [searchTerm, statusFilter, resetPage])
 
     if (loading) {
         return <div className="p-6">Loading orders...</div>
@@ -89,11 +74,13 @@ const AdminOrders = () => {
                 </div>
             </div>
 
-            <AdminStatsCards
-                summaryStats={summaryStats}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-            />
+            <div className="mb-6">
+                <AdminStatsCards
+                    summaryStats={summaryStats}
+                    statusFilter={statusFilter}
+                    setStatusFilter={setStatusFilter}
+                />
+            </div>
 
             {filteredOrders.length === 0 ? (
                 <div className="border rounded-lg p-6 bg-white text-gray-600">
@@ -109,7 +96,6 @@ const AdminOrders = () => {
                             toggleOrderExpansion={toggleOrderExpansion}
                             updatingOrderId={updatingOrderId}
                             handleStatusChange={handleStatusChange}
-                            getStatusBadgeClasses={getStatusBadgeClasses}
                         />
                     ))}
                 </div>
