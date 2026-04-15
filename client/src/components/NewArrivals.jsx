@@ -1,14 +1,16 @@
-import React, { useEffect, useState} from 'react'
+import React, {useMemo} from 'react'
 import ProductPreview from "./ProductPreview.jsx";
 import Title from "./Title.jsx";
 import {useSelector} from "react-redux";
 
 const NewArrivals = () => {
     const products = useSelector((state) => state.shop.products)
-    const [latestProducts, setLatestProducts] = useState([]);
-    useEffect(() => {
-        setLatestProducts(products.slice(0,10));
-    },[products])
+
+    const latestProducts = useMemo(() => {
+        return [...products]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 10)
+    }, [products])
 
     return (
         <div className='my-10'>
@@ -17,8 +19,8 @@ const NewArrivals = () => {
             </div>
         {/*    Display the products*/}
             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
-                {latestProducts.map((product, index) => (
-                    <ProductPreview key={index} id={product._id} images={product.images} name={product.name} price={product.price} />
+                {latestProducts.map((product,) => (
+                    <ProductPreview key={product._id} id={product._id} images={product.images} name={product.name} price={product.price} />
                 ))}
             </div>
         </div>

@@ -4,9 +4,12 @@ import {API_URL} from "../config/api.js";
 import {useSelector} from "react-redux";
 import Title from "../components/Title.jsx";
 import {Link} from "react-router-dom";
+import {usePagination} from "../hooks/usePagination.js";
+import PageChanger from "../components/PageChanger.jsx";
 
 const Orders = () => {
     const token = useSelector(selectToken);
+    const ordersPerPage = 5;
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -52,6 +55,13 @@ const Orders = () => {
 
         fetchOrders()
     }, [token])
+
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems,
+    } = usePagination(orders, ordersPerPage)
 
     if (loading) {
         return (
@@ -100,7 +110,7 @@ const Orders = () => {
             </div>
 
             <div className="flex flex-col gap-8">
-                {orders.map((order) => (
+                {paginatedItems.map((order) => (
                     <div key={order._id} className="border rounded-lg p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                             <div>
@@ -165,6 +175,13 @@ const Orders = () => {
                     </div>
                 ))}
             </div>
+            {totalPages > 1 && (
+                <PageChanger
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                />
+            )}
         </div>
     )
 

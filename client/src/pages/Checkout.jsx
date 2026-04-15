@@ -5,7 +5,6 @@ import { getCartData, getCartSubtotal, getCartTotal } from "../utils/cartHelpers
 import { showToast } from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
 import OrderSummary from "../components/OrderSummary.jsx";
-import { assets } from "../assets/assets.js";
 import { API_URL } from "../config/api.js";
 import { selectToken } from "../redux/features/authSlice.js";
 
@@ -245,52 +244,52 @@ const Checkout = () => {
                         />
                     </div>
 
-                    <div className="my-10">
-                        <div className="text-xl sm:text-2xl mb-6">
-                            <p>Payment Method</p>
-                        </div>
+                    {/*<div className="my-10">*/}
+                    {/*    <div className="text-xl sm:text-2xl mb-6">*/}
+                    {/*        <p>Payment Method</p>*/}
+                    {/*    </div>*/}
 
-                        <div className="flex flex-col gap-3">
-                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
-                                <input
-                                    type="radio"
-                                    name="payment"
-                                    checked={paymentMethod === 'stripe'}
-                                    onChange={() => setPaymentMethod('stripe')}
-                                />
-                                <span><img src={assets.stripe_logo} alt='stripe logo' className="h-6" /></span>
-                            </label>
+                    {/*    <div className="flex flex-col gap-3">*/}
+                    {/*        <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">*/}
+                    {/*            <input*/}
+                    {/*                type="radio"*/}
+                    {/*                name="payment"*/}
+                    {/*                checked={paymentMethod === 'stripe'}*/}
+                    {/*                onChange={() => setPaymentMethod('stripe')}*/}
+                    {/*            />*/}
+                    {/*            <span><img src={assets.stripe_logo} alt='stripe logo' className="h-6" /></span>*/}
+                    {/*        </label>*/}
 
-                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
-                                <input
-                                    type="radio"
-                                    name="payment"
-                                    checked={paymentMethod === 'cc'}
-                                    onChange={() => setPaymentMethod('cc')}
-                                />
-                                <span>Credit Card Form (not enabled yet)</span>
-                            </label>
+                    {/*        <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">*/}
+                    {/*            <input*/}
+                    {/*                type="radio"*/}
+                    {/*                name="payment"*/}
+                    {/*                checked={paymentMethod === 'cc'}*/}
+                    {/*                onChange={() => setPaymentMethod('cc')}*/}
+                    {/*            />*/}
+                    {/*            <span>Credit Card Form (not enabled yet)</span>*/}
+                    {/*        </label>*/}
 
-                            <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">
-                                <input
-                                    type="radio"
-                                    name="payment"
-                                    checked={paymentMethod === 'paypal'}
-                                    onChange={() => setPaymentMethod('paypal')}
-                                />
-                                <span><img src={assets.paypal_logo} alt='paypal logo' className="h-6" /></span>
-                            </label>
-                        </div>
-                    </div>
+                    {/*        <label className="flex items-center gap-3 border p-3 rounded cursor-pointer">*/}
+                    {/*            <input*/}
+                    {/*                type="radio"*/}
+                    {/*                name="payment"*/}
+                    {/*                checked={paymentMethod === 'paypal'}*/}
+                    {/*                onChange={() => setPaymentMethod('paypal')}*/}
+                    {/*            />*/}
+                    {/*            <span><img src={assets.paypal_logo} alt='paypal logo' className="h-6" /></span>*/}
+                    {/*        </label>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
-                    {paymentMethod === 'cc' && (
-                        <div className='my-10'>
-                            CC FORM COMING SOON
-                        </div>
-                    )}
+                    {/*{paymentMethod === 'cc' && (*/}
+                    {/*    <div className='my-10'>*/}
+                    {/*        CC FORM COMING SOON*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
                 </div>
 
-                <div className="w-full lg:w-105">
+                <div className="w-full lg:w-105 mb-5">
                     <OrderSummary
                         currency={currency}
                         subtotal={subtotal}
