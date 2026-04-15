@@ -1,14 +1,17 @@
-import React, { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useRef, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
 import ProductForm from '../components/ProductForm.jsx'
 import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
 import {DEFAULT_INVENTORY} from "../utils/InventoryHelpers.js";
+import {showToast} from "../../redux/features/shopSlice.js";
+
 const AddProduct = () => {
     const token = useSelector(selectToken)
     const { submitting, submitProduct } = useProductFormSubmit()
+    const dispatch = useDispatch()
 
 
     const [formData, setFormData] = useState({
@@ -24,9 +27,10 @@ const AddProduct = () => {
     const [images, setImages] = useState([])
     const [error, setError] = useState('')
     const [imageError, setImageError] = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
+
 
     const fileInputRef = useRef(null)
+
 
     const resetForm = () => {
         setFormData({
@@ -39,9 +43,8 @@ const AddProduct = () => {
             bestseller: false,
         })
         setImages([])
-        setError('')
         setImageError('')
-        setSuccessMessage('')
+
 
         if (fileInputRef.current) {
             fileInputRef.current.value = ''
@@ -51,7 +54,7 @@ const AddProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
-        setSuccessMessage('')
+
 
         const result = await submitProduct({
             url: `${API_URL}/api/products/add`,
@@ -73,7 +76,7 @@ const AddProduct = () => {
             return
         }
 
-        setSuccessMessage('Product added successfully')
+        dispatch(showToast("Product Added Successfully"))
         resetForm()
     }
 
@@ -101,7 +104,7 @@ const AddProduct = () => {
                 />
 
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                {successMessage && <p className="text-green-600 text-sm">{successMessage}</p>}
+
 
                 <button
                     type="submit"

@@ -3,13 +3,14 @@ import {NavLink, Link, useNavigate} from 'react-router-dom'
 import { useDispatch, useSelector} from 'react-redux'
 import { assets } from '../assets/assets'
 import { toggleShowSearch, selectCartCount } from '../redux/features/shopSlice'
-import {logout, selectCurrentUser, selectIsAuthenticated} from "../redux/features/authSlice.js";
+import {logout, selectCurrentUser, selectIsAuthenticated, selectIsAdmin} from "../redux/features/authSlice.js";
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false)
   const dispatch = useDispatch()
   const user = useSelector(selectCurrentUser)
   const isAuthenticated = useSelector(selectIsAuthenticated)
+  const isAdmin = useSelector(selectIsAdmin)
   const navigate = useNavigate()
 
   const cartCount = useSelector(selectCartCount)
@@ -75,6 +76,11 @@ const NavBar = () => {
                       <button onClick={handleLogout}>
                         <p className="cursor-pointer hover:text-black">Logout</p>
                       </button>
+                      {isAdmin &&
+                          <button onClick={()=>navigate("/admin")}>
+                            <p className="cursor-pointer text-black hover:font-semibold">Admin</p>
+                          </button>
+                      }
 
                     </>
                   :

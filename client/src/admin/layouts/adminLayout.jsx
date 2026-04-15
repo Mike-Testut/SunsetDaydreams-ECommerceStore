@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import AdminSideBar from "../components/AdminSideBar.jsx";
 import AdminTopBar from "../components/AdminTopBar.jsx";
+import Toast from "../../components/Toast.jsx";
 
 const AdminLayout = () => {
     return (
@@ -16,6 +17,7 @@ const AdminLayout = () => {
                         <Outlet />
                     </main>
                 </div>
+            <Toast />
             </div>
         </div>
     );
