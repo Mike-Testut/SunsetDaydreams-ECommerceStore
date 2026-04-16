@@ -3,6 +3,7 @@ import ProductModel from "../models/ProductModel.js";
 import stripe from "../config/stripe.js"
 import { generateOrderNumber } from "../utils/generateOrderNumber.js";
 import PendingCheckoutModel from "../models/PendingCheckoutModel.js";
+import {createNotification} from "../utils/createNotifications.js";
 
 const createOrder = async (req, res) => {
     try {
@@ -91,8 +92,43 @@ const createOrder = async (req, res) => {
                 (item) => item.size === entry.requestedSize
             );
 
+            const previousQuantity = inventoryItem.quantity;
             inventoryItem.quantity -= entry.requestedQuantity;
+            const newQuantity = inventoryItem.quantity;
             await entry.product.save();
+
+            const LOW_STOCK_THRESHOLD = 5
+
+            if (newQuantity === 0 && previousQuantity > 0) {
+                await createNotification({
+                    type: "OUT_OF_STOCK",
+                    title: "Product out of stock",
+                    message: `${entry.product.name} in size ${entry.requestedSize} is now out of stock.`,
+                    link: "/admin/allproducts",
+                    metadata: {
+                        productId: entry.product._id,
+                        productName: entry.product.name,
+                        size: entry.requestedSize,
+                        quantity: inventoryItem.quantity,
+                    },
+                });
+            } else if (
+                previousQuantity > LOW_STOCK_THRESHOLD &&
+                newQuantity <= LOW_STOCK_THRESHOLD &&
+                newQuantity > 0) {
+                await createNotification({
+                    type: "LOW_STOCK",
+                    title: "Low stock alert",
+                    message: `${entry.product.name} in size ${entry.requestedSize} is low stock (${inventoryItem.quantity} left).`,
+                    link: "/admin/allproducts",
+                    metadata: {
+                        productId: entry.product._id,
+                        productName: entry.product.name,
+                        size: entry.requestedSize,
+                        quantity: inventoryItem.quantity,
+                    },
+                });
+            }
         }
 
         const normalizedSubtotal = Number(subtotal);
@@ -113,6 +149,18 @@ const createOrder = async (req, res) => {
         };
 
         const order = await OrderModel.create(orderData);
+
+        await createNotification({
+            type: "NEW_ORDER",
+            title: "New order received",
+            message: `Order #${order.orderNumber} was placed for ${order.items.length} items for $${order.total.toFixed(2)}.`,
+            link: `/admin/orders`,
+            metadata: {
+                orderId: order._id,
+                orderNumber: order.orderNumber,
+                total: order.total,
+            },
+        });
 
         return res.status(201).json({
             success: true,

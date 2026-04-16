@@ -8,6 +8,7 @@ import productRouter from "./routes/productRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import categoryRouter from "./routes/categoryRoute.js";
 import {handleStripeWebhook} from "./controllers/orderController.js";
+import notificationRouter from "./routes/notificationRoute.js";
 
 
 //App Config
@@ -36,6 +37,7 @@ app.use('/api/user/', userRouter);
 app.use('/api/products/', productRouter)
 app.use('/api/order/', orderRouter)
 app.use('/api/categories/', categoryRouter)
+app.use('/api/notification/', notificationRouter)
 app.get('/', (req, res) => {
     res.send('API is running')
 })

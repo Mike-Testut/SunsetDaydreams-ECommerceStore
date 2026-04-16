@@ -6,6 +6,11 @@ import {selectToken} from "../../redux/features/authSlice.js";
 import {fetchAdminOrders} from "../utils/fetchAdminOrders.js";
 import {filterOrdersByRange, getRevenueStats} from "../utils/orderAnalytics.js";
 import CustomDateRangeModal from "../components/CustomDateRangeModal.jsx";
+import {
+    fetchAdminNotifications,
+    markAdminNotificationAsRead,
+    markAllAdminNotificationsAsRead
+} from "../utils/fetchAdminNotifications.js";
 
 const AdminDashboard = () => {
     const token = useSelector(selectToken);
@@ -16,24 +21,67 @@ const AdminDashboard = () => {
     const [customRangeModalOpen, setCustomRangeModalOpen] = useState(false)
     const [draftCustomRange, setDraftCustomRange] = useState(undefined)
     const [customRange, setCustomRange] = useState(undefined)
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
-        const loadOrders = async () => {
-            try{
-                const fetchedOrders = await fetchAdminOrders(token)
-                setOrders(fetchedOrders)
+        if (!token) {
+            setLoading(false);
+            setError("You must be logged in as an admin to load dashboard");
+            return;
+        }
+
+        const loadDashboardData = async () => {
+            try {
+                const [fetchedOrders, notificationData] = await Promise.all([
+                    fetchAdminOrders(token),
+                    fetchAdminNotifications(token),
+                ]);
+
+                setOrders(fetchedOrders);
+                setNotifications(notificationData.notifications);
+                setUnreadCount(notificationData.unreadCount);
             } catch (error) {
-                setError(error.message)
+                setError(error.message);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
+        };
+
+        loadDashboardData();
+
+        const intervalId = setInterval(loadDashboardData, 30000);
+
+        return () => clearInterval(intervalId);
+    }, [token]);
+
+    const handleMarkAsRead = async (notificationId) =>{
+        try{
+            await markAdminNotificationAsRead(token, notificationId);
+            setNotifications((currentNotifications) =>
+            currentNotifications.map((notification) =>
+            notification._id === notificationId
+            ? { ...notification, isRead: true }
+            : notification));
+            setUnreadCount((currentCount) => Math.max(currentCount - 1, 0))
+        } catch (error) {
+            setError(error.message);
         }
-        if(!token){
-            setLoading(false)
-            setError("You must be logged in as an admin to load orders")
+    }
+    const handleMarkAllAsRead = async () =>{
+        try{
+            await markAllAdminNotificationsAsRead(token)
+            setNotifications((currentNotifications) =>
+            currentNotifications.map((notification) => ({
+                ...notification,
+                isRead: true,
+                }))
+            )
+            setUnreadCount(0)
+        } catch (error) {
+            setError(error.message);
         }
-        loadOrders();
-    },[token])
+    }
 
     const filteredOrders = useMemo(() => {
         return filterOrdersByRange(orders, selectedRange,customRange)
@@ -73,7 +121,12 @@ const AdminDashboard = () => {
             <div className="mb-6">
                 <h1 className="text-2xl font-medium">Dashboard</h1>
             </div>
-            <Notifications/>
+            <Notifications
+                notifications={notifications}
+                unreadCount={unreadCount}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+            />
             <RevenueCard
                 selectedRange={selectedRange}
                 setSelectedRange={setSelectedRange}
