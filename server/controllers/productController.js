@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 import ProductModel from "../models/ProductModel.js"
+import { ensureCategoryExists } from '../utils/ensureCategoryExists.js'
 
 const addProduct = async (req, res) => {
     try {
@@ -20,14 +21,20 @@ const addProduct = async (req, res) => {
             })
             uploadedImages.push(result.secure_url)
         }
-        const parsedInventory = JSON.parse(inventory || "[]");
+
+        const parsedInventory = JSON.parse(inventory || "[]")
+
+        const {
+            category: normalizedCategory,
+            subcategory: normalizedSubcategory,
+        } = await ensureCategoryExists(category, subcategory)
 
         const productData = {
             name,
             description,
             price: Number(price),
-            category,
-            subcategory,
+            category: normalizedCategory,
+            subcategory: normalizedSubcategory,
             inventory: parsedInventory,
             bestseller: bestseller === "true",
             date: Date.now(),
@@ -149,7 +156,7 @@ const updateProduct = async (req, res) => {
         }
 
         const finalImages = [...parsedExistingImages, ...uploadedImages]
-        const parsedInventory = JSON.parse(inventory || "[]");
+        const parsedInventory = JSON.parse(inventory || "[]")
 
         if (!finalImages.length) {
             return res.status(400).json({
@@ -158,11 +165,16 @@ const updateProduct = async (req, res) => {
             })
         }
 
+        const {
+            category: normalizedCategory,
+            subcategory: normalizedSubcategory,
+        } = await ensureCategoryExists(category, subcategory)
+
         product.name = name
         product.description = description
         product.price = Number(price)
-        product.category = category
-        product.subcategory = subcategory
+        product.category = normalizedCategory
+        product.subcategory = normalizedSubcategory
         product.inventory = parsedInventory
         product.bestseller = bestseller === "true"
         product.images = finalImages

@@ -122,18 +122,15 @@ const Product = () => {
                             })}
                         </div>
 
-                        {size && (
+                        {size && selectedSizeInventory && selectedSizeInventory.quantity <= 5 && (
                             <p className={`text-sm ${
-                                selectedSizeInventory?.quantity <= 0
+                                selectedSizeInventory.quantity === 0
                                     ? 'text-red-500'
-                                    : selectedSizeInventory?.quantity <= 5
-                                        ? 'text-orange-500'
-                                        : 'text-gray-500'
+                                    : 'text-orange-500'
                             }`}>
-                                {selectedSizeInventory?.quantity > 0
-                                    ? selectedSizeInventory?.quantity <=5 ?
-                                        `Only ${selectedSizeInventory.quantity} left in stock. Checkout soon!` : ""
-                                    : 'Out of stock'}
+                                {selectedSizeInventory.quantity === 0
+                                    ? 'Out of stock'
+                                    : `Only ${selectedSizeInventory.quantity} left in stock. Checkout soon!`}
                             </p>
                         )}
                     </div>

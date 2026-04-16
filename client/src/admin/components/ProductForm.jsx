@@ -1,8 +1,22 @@
 import React from 'react'
-import InventoryFields from "./InventoryFields.jsx";
-import {CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS} from "../utils/categoryOptions.js";
+import InventoryFields from "./InventoryFields.jsx"
+import {formatLabel} from "../../utils/formatLabel.js";
 
-const ProductForm = ({ formData, setFormData }) => {
+const NEW_OPTION = "__new__"
+
+
+const ProductForm = ({
+                         formData,
+                         setFormData,
+                         categoryOptions = [],
+                         subCategoryOptions = [],
+                         customCategory,
+                         setCustomCategory,
+                         customSubcategory,
+                         setCustomSubcategory,
+                     }) => {
+    const isSubcategoryDisabled =
+        !formData.category || formData.category === NEW_OPTION && !customCategory.trim()
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target
@@ -13,9 +27,37 @@ const ProductForm = ({ formData, setFormData }) => {
         }))
     }
 
+    const handleCategoryChange = (e) => {
+        const value = e.target.value
+
+        setFormData((prev) => ({
+            ...prev,
+            category: value,
+            subcategory: '',
+        }))
+
+        if (value !== NEW_OPTION) {
+            setCustomCategory('')
+        }
+
+        setCustomSubcategory('')
+    }
+
+    const handleSubcategoryChange = (e) => {
+        const value = e.target.value
+
+        setFormData((prev) => ({
+            ...prev,
+            subcategory: value,
+        }))
+
+        if (value !== NEW_OPTION) {
+            setCustomSubcategory('')
+        }
+    }
+
     return (
         <>
-            {/* Name */}
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Product Name</label>
                 <input
@@ -27,7 +69,6 @@ const ProductForm = ({ formData, setFormData }) => {
                 />
             </div>
 
-            {/* Description */}
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Description</label>
                 <textarea
@@ -39,45 +80,76 @@ const ProductForm = ({ formData, setFormData }) => {
                 />
             </div>
 
-            {/*  Category + Subcategory */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium">Category</label>
                     <select
                         name="category"
                         value={formData.category}
-                        onChange={handleChange}
+                        onChange={handleCategoryChange}
                         className="border rounded px-3 py-2"
                     >
                         <option value="">Select category</option>
-                        {CATEGORY_OPTIONS.map(c => (
-                            <option key={c} value={c}>{c}</option>
+                        {categoryOptions.map((category) => (
+                            <option key={category} value={category}>
+                                {formatLabel(category)}
+                            </option>
                         ))}
+                        <option value={NEW_OPTION}>+ Create New Category</option>
                     </select>
+
+                    {formData.category === NEW_OPTION && (
+                        <input
+                            type="text"
+                            value={customCategory}
+                            onChange={(e) => setCustomCategory(e.target.value)}
+                            placeholder="Enter new category"
+                            className="border rounded px-3 py-2"
+                        />
+                    )}
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium">Subcategory</label>
                     <select
                         name="subcategory"
                         value={formData.subcategory}
-                        onChange={handleChange}
-                        className="border rounded px-3 py-2"
+                        onChange={handleSubcategoryChange}
+                        disabled={isSubcategoryDisabled}
+                        className="border rounded px-3 py-2 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                     >
-                        <option value="">Select subcategory</option>
-                        {SUBCATEGORY_OPTIONS.map(s => (
-                            <option key={s} value={s}>{s}</option>
+                        <option value="">
+                            {isSubcategoryDisabled ? 'Select category first' : 'Select subcategory'}
+                        </option>
+
+                        {subCategoryOptions.map((subcategory) => (
+                            <option key={subcategory} value={subcategory}>
+                                {formatLabel(subcategory)}
+                            </option>
                         ))}
+
+                        {!isSubcategoryDisabled && (
+                            <option value={NEW_OPTION}>+ Create New Subcategory</option>
+                        )}
                     </select>
+
+                    {formData.subcategory === NEW_OPTION && (
+                        <input
+                            type="text"
+                            value={customSubcategory}
+                            onChange={(e) => setCustomSubcategory(e.target.value)}
+                            placeholder="Enter new subcategory"
+                            className="border rounded px-3 py-2"
+                        />
+                    )}
                 </div>
             </div>
-            {/*Inventory*/}
+
             <InventoryFields
                 inventory={formData.inventory}
                 setFormData={setFormData}
             />
 
-
-            {/* Price  */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium">Price</label>
@@ -91,7 +163,7 @@ const ProductForm = ({ formData, setFormData }) => {
                     />
                 </div>
             </div>
-            {/* Bestseller */}
+
             <label className="flex gap-2">
                 <input
                     type="checkbox"
@@ -106,3 +178,4 @@ const ProductForm = ({ formData, setFormData }) => {
 }
 
 export default ProductForm
+export { NEW_OPTION }

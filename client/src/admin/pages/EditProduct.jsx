@@ -1,18 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
 import ProductForm from '../components/ProductForm.jsx'
 import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
 import {DEFAULT_INVENTORY} from "../utils/InventoryHelpers.js";
+import {showToast} from "../../redux/features/shopSlice.js";
 
 const EditProduct = () => {
     const { productID } = useParams()
     const navigate = useNavigate()
     const token = useSelector(selectToken)
     const { submitting, submitProduct } = useProductFormSubmit()
+    const dispatch = useDispatch()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -28,7 +30,6 @@ const EditProduct = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [imageError, setImageError] = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
 
     const fileInputRef = useRef(null)
 
@@ -83,7 +84,6 @@ const EditProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
-        setSuccessMessage('')
 
         const result = await submitProduct({
             url: `${API_URL}/api/products/update/${productID}`,
@@ -105,7 +105,7 @@ const EditProduct = () => {
             return
         }
 
-        setSuccessMessage('Product updated successfully')
+        dispatch(showToast('Product updated successfully'))
         setImageError('')
 
         setImages(
@@ -166,7 +166,6 @@ const EditProduct = () => {
                 />
 
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                {successMessage && <p className="text-green-600 text-sm">{successMessage}</p>}
 
                 <div className="flex gap-3">
                     <button
