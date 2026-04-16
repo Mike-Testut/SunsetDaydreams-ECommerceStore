@@ -1,2 +1,2 @@
 export const CATEGORY_OPTIONS = ['Mens', 'Womens', 'Accessories']
-export const SUBCATEGORY_OPTIONS = ['Tops', 'Bottoms', 'Outerwear', 'Swimwear', 'Hats', 'Bags']
+export const SUBCATEGORY_OPTIONS = ['Shirts', 'Sweaters + Sweatshirts', 'Athleticwear', 'Jackets', 'Swimwear', 'Hats', 'Bags']

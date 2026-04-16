@@ -45,6 +45,11 @@ const NavBar = () => {
             <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
+          <NavLink to="/clothing/accessories" className="flex flex-col items-center gap-1">
+            <p className="hover:text-black">Accessories</p>
+            <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
+          </NavLink>
+
           <NavLink to="/sale" className="flex flex-col items-center gap-1">
             <p className="hover:text-black">Sale</p>
             <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
@@ -125,6 +130,9 @@ const NavBar = () => {
             </NavLink>
             <NavLink onClick={() => setVisible(false)} to="/clothing/womens" className="py-2 pl-6 border">
               Womens
+            </NavLink>
+            <NavLink onClick={() => setVisible(false)} to="/clothing/accessories" className="py-2 pl-6 border">
+              Accessories
             </NavLink>
             <NavLink onClick={() => setVisible(false)} to="/sale" className="py-2 pl-6 border">
               Sale
