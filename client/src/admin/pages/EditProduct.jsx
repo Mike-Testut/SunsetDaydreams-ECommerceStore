@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import { selectToken } from '../../redux/features/authSlice.js'
 import { API_URL } from '../../config/api.js'
-import ProductForm from '../components/ProductForm.jsx'
+import ProductForm, {NEW_OPTION} from '../components/ProductForm.jsx'
 import ImageUploader from '../components/ImageUploader.jsx'
 import useProductFormSubmit from '../hooks/useProductFormSubmit.js'
 import {DEFAULT_INVENTORY} from "../utils/InventoryHelpers.js";
@@ -26,12 +26,69 @@ const EditProduct = () => {
         bestseller: false,
     })
 
+    const [categories, setCategories] = useState([])
+    const [categoriesLoading, setCategoriesLoading] = useState(true)
+    const [customCategory, setCustomCategory] = useState('')
+    const [customSubcategory, setCustomSubcategory] = useState('')
+
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [imageError, setImageError] = useState('')
 
     const fileInputRef = useRef(null)
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                setCategoriesLoading(true)
+
+                const response = await fetch(`${API_URL}/api/categories`)
+                const data = await response.json()
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Failed to load categories')
+                }
+
+                setCategories(data.categories || [])
+            } catch (error) {
+                console.log('Could not fetch categories:', error)
+                setError(error.message || 'Something went wrong loading categories')
+            } finally {
+                setCategoriesLoading(false)
+            }
+        }
+
+        fetchCategories()
+    }, [])
+
+    const categoryOptions = useMemo(() => {
+        return categories.map((category) => category.name)
+    }, [categories])
+
+    const selectedCategoryName =
+        formData.category === NEW_OPTION ? customCategory.trim() : formData.category
+
+    const subCategoryOptions = useMemo(() => {
+        const selectedCategory = categories.find(
+            (category) => category.name === selectedCategoryName
+        )
+
+        return selectedCategory?.subcategories || []
+    }, [categories, selectedCategoryName])
+
+    const refreshCategories = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/categories`)
+            const data = await response.json()
+
+            if (response.ok && data.success) {
+                setCategories(data.categories || [])
+            }
+        } catch (error) {
+            console.log('Could not refresh categories:', error)
+        }
+    }
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -85,11 +142,34 @@ const EditProduct = () => {
         e.preventDefault()
         setError('')
 
+        const resolvedCategory =
+            formData.category === NEW_OPTION
+                ? customCategory.trim()
+                : formData.category.trim()
+
+        const resolvedSubcategory =
+            formData.subcategory === NEW_OPTION
+                ? customSubcategory.trim()
+                : formData.subcategory.trim()
+
+        if (!resolvedCategory) {
+            setError('Please select or enter a category')
+            return
+        }
+
+        if (!resolvedSubcategory) {
+            setError('Please select or enter a subcategory')
+            return
+        }
         const result = await submitProduct({
             url: `${API_URL}/api/products/update/${productID}`,
             method: 'PUT',
             token,
-            formData,
+            formData: {
+                ...formData,
+                category: resolvedCategory,
+                subcategory: resolvedSubcategory,
+            },
             images,
             imageError,
             isEdit: true,
@@ -107,6 +187,7 @@ const EditProduct = () => {
 
         dispatch(showToast('Product updated successfully'))
         setImageError('')
+        refreshCategories()
 
         setImages(
             (result.data.product.images || []).map((url) => ({
@@ -132,6 +213,9 @@ const EditProduct = () => {
     if (error && !formData.name) {
         return <div className="p-6 text-red-500">{error}</div>
     }
+    if (categoriesLoading) {
+        return <div className="w-full p-6">Loading product form...</div>
+    }
 
     return (
         <div className="w-full p-6">
@@ -155,6 +239,12 @@ const EditProduct = () => {
                 <ProductForm
                     formData={formData}
                     setFormData={setFormData}
+                    categoryOptions={categoryOptions}
+                    subCategoryOptions={subCategoryOptions}
+                    customCategory={customCategory}
+                    setCustomCategory={setCustomCategory}
+                    customSubcategory={customSubcategory}
+                    setCustomSubcategory={setCustomSubcategory}
                 />
 
                 <ImageUploader
