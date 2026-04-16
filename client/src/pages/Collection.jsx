@@ -33,8 +33,8 @@ const Collection = () => {
                 normalizedMap.set(normalizedKey, rawSubcategory)
             }
         })
-
         return Array.from(normalizedMap.values())
+
     }, [products, category])
 
     const filteredProducts = useMemo(() => {
