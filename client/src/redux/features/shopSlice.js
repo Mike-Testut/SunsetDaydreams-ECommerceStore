@@ -74,6 +74,12 @@ const shopSlice = createSlice({
         clearCart: (state) => {
             state.cartItems = {}
         },
+        removeProductFromCart: (state, action) => {
+            const { productId } = action.payload
+            if (!state.cartItems[productId]) return
+
+            delete state.cartItems[productId]
+        },
         showToast: (state, action) => {
             state.toast.visible = true
             state.toast.message = action.payload
@@ -95,12 +101,17 @@ export const {
     updateCartQuantity,
     removeFromCart,
     clearCart,
+    removeProductFromCart,
     showToast,
     hideToast,
 } = shopSlice.actions;
 
 export const selectCartCount = (state) => {
-    return Object.values(state.shop.cartItems).reduce((total, sizes) => {
+    const validProductIds = new Set(state.shop.products.map((product) => product._id))
+
+    return Object.entries(state.shop.cartItems).reduce((total, [productId, sizes]) => {
+        if (!validProductIds.has(productId)) return total
+
         return total + Object.values(sizes).reduce((sum, qty) => sum + qty, 0)
     }, 0)
 }
