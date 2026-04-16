@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useMemo} from 'react'
 import { useDispatch, useSelector } from "react-redux"
-import { removeFromCart, updateCartQuantity } from "../redux/features/shopSlice.js"
+import {removeFromCart, updateCartQuantity} from "../redux/features/shopSlice.js"
 import Title from "../components/Title.jsx"
 import { Link, useNavigate } from "react-router-dom"
 import OrderSummary from "../components/OrderSummary.jsx"
@@ -60,6 +60,7 @@ const Cart = () => {
     const max = Math.max(1, Math.min(MAX_QTY_OPTIONS, availableStock))
     return Array.from({ length: max }, (_, i) => i + 1)
   }
+
 
   return (
       cartDataWithStock.length > 0 ? (

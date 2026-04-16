@@ -5,14 +5,18 @@ import Footer from "../components/Footer";
 import ScrollToTop from "../utils/ScrollToTop.js";
 import Toast from "../components/Toast.jsx";
 import AuthWatcher from "../components/AuthWatcher.jsx";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
 import {API_URL} from "../config/api.js";
 import {setProducts} from "../redux/features/shopSlice.js";
+import {useCartCleanup} from "../hooks/useCartCleanup.js";
 
 
 const StoreLayout = () => {
     const dispatch = useDispatch()
+    const products = useSelector((state) => state.shop.products)
+    const cartItems = useSelector((state) => state.shop.cartItems)
+    useCartCleanup(products,cartItems)
 
     useEffect(() => {
         const fetchProducts = async () => {

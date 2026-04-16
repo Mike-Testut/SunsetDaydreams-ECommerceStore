@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState} from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { getCartData, getCartSubtotal, getCartTotal } from "../utils/cartHelpers.js";
@@ -32,6 +32,7 @@ const Checkout = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('stripe')
     const [submitting, setSubmitting] = useState(false)
+
 
     const setPaymentButtonText = (paymentMethod) => {
         switch (paymentMethod) {
