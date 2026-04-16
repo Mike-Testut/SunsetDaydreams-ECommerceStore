@@ -158,7 +158,7 @@ const AddProduct = () => {
 
         dispatch(showToast("Product Added Successfully"))
         resetForm()
-        refreshCategories()
+        await refreshCategories()
     }
 
     if (categoriesLoading) {
