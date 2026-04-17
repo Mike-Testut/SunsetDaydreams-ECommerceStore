@@ -1,7 +1,15 @@
 import { API_URL } from "../../config/api.js";
 
-export const fetchAdminNotifications = async (token) => {
-    const response = await fetch(`${API_URL}/api/notification/admin`, {
+export const fetchAdminNotifications = async (
+    token,
+    { unreadOnly = false, limit = 20 } = {}
+) => {
+    const params = new URLSearchParams({
+        unreadOnly: String(unreadOnly),
+        limit: String(limit),
+    });
+
+    const response = await fetch(`${API_URL}/api/notification/admin?${params.toString()}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

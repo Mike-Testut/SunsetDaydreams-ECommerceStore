@@ -2,9 +2,14 @@ import NotificationModel from "../models/NotificationModel.js";
 
 export const getAdminNotifications = async (req, res) => {
     try {
-        const notifications = await NotificationModel.find({})
+        const unreadOnly = req.query.unreadOnly === 'true';
+        const limit = Number(req.query.limit) || 20;
+
+        const filter = unreadOnly ? { isRead: false } : {};
+
+        const notifications = await NotificationModel.find(filter)
             .sort({ createdAt: -1 })
-            .limit(20);
+            .limit(limit);
 
         const unreadCount = await NotificationModel.countDocuments({ isRead: false });
 
@@ -21,6 +26,7 @@ export const getAdminNotifications = async (req, res) => {
         });
     }
 };
+
 
 export const markNotificationAsRead = async (req, res) => {
     try {
