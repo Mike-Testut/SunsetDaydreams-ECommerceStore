@@ -294,19 +294,13 @@ const updateOrderStatus = async (req, res) => {
 
 const createStripeCheckoutSession = async (req, res) => {
     try {
-        const {items, shippingAddress, subtotal, shippingFee, tax, total} = req.body;
+        const { items, subtotal, shippingFee, tax, total } = req.body;
         const orderNumber = generateOrderNumber();
 
         if (!items || !Array.isArray(items) || items.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: 'Items required',
-            })
-        }
-        if (!shippingAddress?.email) {
-            return res.status(400).json({
-                success: false,
-                message: 'email address required',
             })
         }
 
@@ -322,6 +316,7 @@ const createStripeCheckoutSession = async (req, res) => {
                     message: 'An item in your cart could not be found',
                 })
             }
+
             const requestedQuantity = Number(item.quantity)
             const requestedSize = item.size
 
@@ -331,27 +326,32 @@ const createStripeCheckoutSession = async (req, res) => {
                     message: `Please select size for ${product.name}`
                 })
             }
+
             if (!requestedQuantity || requestedQuantity < 1) {
                 return res.status(400).json({
                     success: false,
                     message: `Invalid quantity for ${product.name}`
                 })
             }
+
             const inventoryItem = product.inventory.find(
                 (entry) => entry.size === requestedSize
             )
+
             if (!inventoryItem) {
                 return res.status(400).json({
                     success: false,
                     message: `${product.name} is not available in size ${requestedSize}.`
                 })
             }
+
             if (inventoryItem.quantity < requestedQuantity) {
                 return res.status(400).json({
                     success: false,
                     message: `Only ${inventoryItem.quantity} left for ${product.name} in size ${requestedSize}.`
                 })
             }
+
             validatedItems.push({
                 productId: product._id,
                 name: product.name,
@@ -360,6 +360,7 @@ const createStripeCheckoutSession = async (req, res) => {
                 quantity: requestedQuantity,
                 price: Number(product.price),
             })
+
             lineItems.push({
                 quantity: requestedQuantity,
                 price_data: {
@@ -388,10 +389,16 @@ const createStripeCheckoutSession = async (req, res) => {
 
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
+            ui_mode: 'embedded_page',
             line_items: lineItems,
-            success_url: `${process.env.CLIENT_URL}/orderplaced?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.CLIENT_URL}/checkout`,
-            customer_email: shippingAddress.email,
+            shipping_address_collection: {
+                allowed_countries: ["US"],
+            },
+            automatic_tax: {
+                enabled: true,
+            },
+            return_url: `${process.env.CLIENT_URL}/orderplaced?session_id={CHECKOUT_SESSION_ID}`,
+            customer_email: req.user?.email || undefined,
             metadata: {
                 source: 'sunset-daydreams'
             }
@@ -402,7 +409,6 @@ const createStripeCheckoutSession = async (req, res) => {
             orderNumber,
             user: req.user ? req.user.id : null,
             items: validatedItems,
-            shippingAddress,
             paymentMethod: 'stripe',
             subtotal: Number(subtotal),
             shippingFee: Number(shippingFee) || 0,
@@ -413,9 +419,11 @@ const createStripeCheckoutSession = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            url: session.url,
+            clientSecret: session.client_secret,
+            sessionId: session.id,
         })
-    }catch(error){
+
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: error.message,
@@ -451,141 +459,126 @@ const getStripeCheckoutSession = async (req, res) => {
     }
 }
 
+const buildShippingAddressFromSession = (session) => {
+    const shippingDetails = session.collected_information?.shipping_details
+    const address = shippingDetails?.address || {}
+
+    const fullName = shippingDetails?.name || session.customer_details?.name || ''
+    const nameParts = fullName.trim().split(/\s+/)
+    const firstName = nameParts[0] || ''
+    const lastName = nameParts.slice(1).join(' ') || ''
+
+    return {
+        firstName,
+        lastName,
+        email: session.customer_details?.email || '',
+        phone: session.customer_details?.phone || '',
+        address: address.line1 || '',
+        city: address.city || '',
+        state: address.state || '',
+        zipCode: address.postal_code || '',
+        country: address.country || '',
+    }
+}
+
 const handleStripeWebhook = async (req, res) => {
-    let event;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SIGNING_SECRET;
+    const sig = req.headers['stripe-signature']
+
+    let event
 
     try {
-        const signature = req.headers['stripe-signature'];
-
-        if (!webhookSecret) {
-            throw new Error('Stripe webhook secret is not configured');
-        }
-
         event = stripe.webhooks.constructEvent(
             req.body,
-            signature,
-            webhookSecret,
-        );
-    } catch (error) {
-        console.log('Stripe webhook signature error:', error.message);
-        return res.status(400).send(`Webhook Error: ${error.message}`);
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
+        )
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`)
     }
 
     try {
-        if (event.type === 'checkout.session.completed') {
-            const session = event.data.object;
+        switch (event.type) {
+            case 'checkout.session.completed': {
+                const session = event.data.object
 
-            const pendingCheckout = await PendingCheckoutModel.findOne({
-                stripeSessionId: session.id,
-                status: 'pending'
-            });
+                const pendingCheckout = await PendingCheckoutModel.findOne({
+                    stripeSessionId: session.id,
+                })
 
-            if (!pendingCheckout) {
-                return res.status(200).json({ received: true });
+                if (!pendingCheckout) {
+                    return res.status(200).json({ received: true })
+                }
+
+                if (pendingCheckout.status === 'completed') {
+                    return res.status(200).json({ received: true })
+                }
+
+                const shippingAddress = buildShippingAddressFromSession(session)
+
+                const createdOrder = await OrderModel.create({
+                    orderNumber: pendingCheckout.orderNumber,
+                    user: pendingCheckout.user,
+                    items: pendingCheckout.items,
+                    shippingAddress,
+                    paymentMethod: 'stripe',
+                    subtotal: pendingCheckout.subtotal,
+                    shippingFee: pendingCheckout.shippingFee,
+                    tax: pendingCheckout.tax,
+                    total: pendingCheckout.total,
+                    isPaid: true,
+                    paidAt: new Date(),
+                    status: 'processing',
+                })
+
+                for (const item of pendingCheckout.items) {
+                    const product = await ProductModel.findById(item.productId)
+
+                    if (!product) continue
+
+                    const inventoryItem = product.inventory.find(
+                        (entry) => entry.size === item.size
+                    )
+
+                    if (!inventoryItem) continue
+
+                    inventoryItem.quantity = Math.max(
+                        0,
+                        inventoryItem.quantity - item.quantity
+                    )
+
+                    await product.save()
+                }
+
+                pendingCheckout.shippingAddress = shippingAddress
+                pendingCheckout.status = 'completed'
+                pendingCheckout.completedAt = new Date()
+                pendingCheckout.order = createdOrder._id
+                await pendingCheckout.save()
+
+                break
             }
 
-            const normalizedItems = [];
-            const LOW_STOCK_THRESHOLD = 5;
+            case 'checkout.session.expired': {
+                const session = event.data.object
 
-            for (const item of pendingCheckout.items) {
-                const product = await ProductModel.findById(item.productId);
+                await PendingCheckoutModel.findOneAndUpdate(
+                    { stripeSessionId: session.id },
+                    { status: 'expired' }
+                )
 
-                if (!product) {
-                    throw new Error('Product not found during Stripe fulfillment');
-                }
-
-                const inventoryItem = product.inventory.find(
-                    (entry) => entry.size === item.size
-                );
-
-                if (!inventoryItem || inventoryItem.quantity < item.quantity) {
-                    throw new Error(`Insufficient inventory for ${product.name} (${item.size})`);
-                }
-
-                const previousQuantity = inventoryItem.quantity;
-                inventoryItem.quantity -= item.quantity;
-                const newQuantity = inventoryItem.quantity;
-
-                await product.save();
-
-                if (newQuantity === 0 && previousQuantity > 0) {
-                    await createNotification({
-                        type: "OUT_OF_STOCK",
-                        title: "Product out of stock",
-                        message: `${product.name} in size ${item.size} is now out of stock.`,
-                        link: "/admin/allproducts",
-                        metadata: {
-                            productId: product._id,
-                            productName: product.name,
-                            size: item.size,
-                            quantity: newQuantity,
-                        },
-                    });
-                } else if (
-                    previousQuantity > LOW_STOCK_THRESHOLD &&
-                    newQuantity <= LOW_STOCK_THRESHOLD &&
-                    newQuantity > 0
-                ) {
-                    await createNotification({
-                        type: "LOW_STOCK",
-                        title: "Low stock alert",
-                        message: `${product.name} in size ${item.size} is low stock (${newQuantity} left).`,
-                        link: "/admin/allproducts",
-                        metadata: {
-                            productId: product._id,
-                            productName: product.name,
-                            size: item.size,
-                            quantity: newQuantity,
-                        },
-                    });
-                }
-
-                normalizedItems.push({
-                    productId: product._id.toString(),
-                    name: product.name,
-                    image: product.images?.[0] || '',
-                    size: item.size,
-                    quantity: item.quantity,
-                    price: Number(item.price),
-                });
+                break
             }
 
-            const order = await OrderModel.create({
-                orderNumber: pendingCheckout.orderNumber,
-                user: pendingCheckout.user || null,
-                items: normalizedItems,
-                shippingAddress: pendingCheckout.shippingAddress,
-                paymentMethod: 'stripe',
-                subtotal: pendingCheckout.subtotal,
-                shippingFee: pendingCheckout.shippingFee,
-                tax: pendingCheckout.tax,
-                total: pendingCheckout.total,
-                status: 'Order Placed',
-            });
-
-            await createNotification({
-                type: "NEW_ORDER",
-                title: "New order received",
-                message: `Order #${order.orderNumber} was placed for ${order.items.length} items for $${order.total.toFixed(2)}.`,
-                link: "/admin/orders",
-                metadata: {
-                    orderId: order._id,
-                    orderNumber: order.orderNumber,
-                    total: order.total,
-                },
-            });
-
-            pendingCheckout.status = 'completed';
-            await pendingCheckout.save();
+            default:
+                break
         }
-
-        return res.status(200).json({ received: true });
+        console.log('CHECKOUT SESSION COMPLETED:', JSON.stringify(session, null, 2))
+        return res.status(200).json({ received: true })
     } catch (error) {
-        console.log('Stripe webhook handling error:', error);
-        return res.status(500).json({ received: false, message: error.message });
+        console.error('Stripe webhook handling error:', error)
+        return res.status(500).json({ received: false, message: error.message })
     }
-};
+}
 
 
 export { createOrder, getOrdersByUser, getOrderByOrderId, getAllOrders, updateOrderStatus,createStripeCheckoutSession, getStripeCheckoutSession, handleStripeWebhook  };
