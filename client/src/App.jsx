@@ -22,6 +22,7 @@ import AllProducts from "./admin/pages/AllProducts.jsx";
 import Customers from "./admin/pages/Customers.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import EditProduct from "./admin/pages/EditProduct.jsx";
+import NotificationsPage from "./admin/pages/NotificationsPage.jsx";
 
 
 const App = () => {
@@ -67,6 +68,7 @@ const App = () => {
                 <Route path="products/:productID" element={<EditProduct/>} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="customers" element={<Customers />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>

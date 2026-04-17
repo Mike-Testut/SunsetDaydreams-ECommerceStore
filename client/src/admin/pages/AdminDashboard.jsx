@@ -35,7 +35,7 @@ const AdminDashboard = () => {
             try {
                 const [fetchedOrders, notificationData] = await Promise.all([
                     fetchAdminOrders(token),
-                    fetchAdminNotifications(token),
+                    fetchAdminNotifications(token, { unreadOnly: true, limit: 10 }),
                 ]);
 
                 setOrders(fetchedOrders);
@@ -55,33 +55,31 @@ const AdminDashboard = () => {
         return () => clearInterval(intervalId);
     }, [token]);
 
-    const handleMarkAsRead = async (notificationId) =>{
-        try{
+    const handleMarkAsRead = async (notificationId) => {
+        try {
             await markAdminNotificationAsRead(token, notificationId);
+
             setNotifications((currentNotifications) =>
-            currentNotifications.map((notification) =>
-            notification._id === notificationId
-            ? { ...notification, isRead: true }
-            : notification));
-            setUnreadCount((currentCount) => Math.max(currentCount - 1, 0))
+                currentNotifications.filter(
+                    (notification) => notification._id !== notificationId
+                )
+            );
+
+            setUnreadCount((currentCount) => Math.max(currentCount - 1, 0));
         } catch (error) {
             setError(error.message);
         }
-    }
-    const handleMarkAllAsRead = async () =>{
-        try{
-            await markAllAdminNotificationsAsRead(token)
-            setNotifications((currentNotifications) =>
-            currentNotifications.map((notification) => ({
-                ...notification,
-                isRead: true,
-                }))
-            )
-            setUnreadCount(0)
+    };
+
+    const handleMarkAllAsRead = async () => {
+        try {
+            await markAllAdminNotificationsAsRead(token);
+            setNotifications([]);
+            setUnreadCount(0);
         } catch (error) {
             setError(error.message);
         }
-    }
+    };
 
     const filteredOrders = useMemo(() => {
         return filterOrdersByRange(orders, selectedRange,customRange)

@@ -76,7 +76,7 @@ const OrderPlaced = () => {
           <Title text1="ORDER" text2="CONFIRMED" />
         </div>
 
-        <div className="border rounded-lg p-8 bg-white max-w-2xl">
+        <div className="border rounded-lg p-8 bg-white max-w-2xl mb-5">
           {error ? (
               <>
                 <p className="text-red-500 mb-4">{error}</p>

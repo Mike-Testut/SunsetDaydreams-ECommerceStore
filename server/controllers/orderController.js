@@ -252,23 +252,36 @@ const updateOrderStatus = async (req, res) => {
             });
         }
 
-        const order = await OrderModel.findByIdAndUpdate(
-            orderId,
-            { status },
-            { new: true }
-        );
+        const existingOrder = await OrderModel.findById(orderId);
 
-        if (!order) {
+        if (!existingOrder) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found',
             });
         }
 
+        const previousStatus = existingOrder.status;
+        existingOrder.status = status;
+        await existingOrder.save();
+
+        if (status === 'Cancelled' && previousStatus !== 'Cancelled') {
+            await createNotification({
+                type: 'ORDER_CANCELLED',
+                title: 'Order cancelled',
+                message: `Order #${existingOrder.orderNumber} was marked as cancelled.`,
+                link: '/admin/orders',
+                metadata: {
+                    orderId: existingOrder._id,
+                    orderNumber: existingOrder.orderNumber,
+                },
+            });
+        }
+
         return res.status(200).json({
             success: true,
             message: 'Order status updated',
-            order,
+            order: existingOrder,
         });
     } catch (error) {
         console.log('updateOrderStatus error:', error);
@@ -442,7 +455,7 @@ const handleStripeWebhook = async (req, res) => {
     let event;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SIGNING_SECRET;
 
-    try{
+    try {
         const signature = req.headers['stripe-signature'];
 
         if (!webhookSecret) {
@@ -453,39 +466,80 @@ const handleStripeWebhook = async (req, res) => {
             req.body,
             signature,
             webhookSecret,
-        )
-    } catch(error){
+        );
+    } catch (error) {
         console.log('Stripe webhook signature error:', error.message);
         return res.status(400).send(`Webhook Error: ${error.message}`);
     }
-    try{
-        if(event.type === 'checkout.session.completed'){
-            const session = event.data.object
+
+    try {
+        if (event.type === 'checkout.session.completed') {
+            const session = event.data.object;
 
             const pendingCheckout = await PendingCheckoutModel.findOne({
                 stripeSessionId: session.id,
-                status:'pending'
-            })
+                status: 'pending'
+            });
+
             if (!pendingCheckout) {
                 return res.status(200).json({ received: true });
             }
-            const normalizedItems =[]
 
-            for(const item of pendingCheckout.items){
-                const product = await ProductModel.findById(item.productId)
+            const normalizedItems = [];
+            const LOW_STOCK_THRESHOLD = 5;
+
+            for (const item of pendingCheckout.items) {
+                const product = await ProductModel.findById(item.productId);
+
                 if (!product) {
                     throw new Error('Product not found during Stripe fulfillment');
                 }
 
                 const inventoryItem = product.inventory.find(
-                    (entry)=>entry.size===item.size
-                )
+                    (entry) => entry.size === item.size
+                );
 
-                if(!inventoryItem || inventoryItem.quantity < item.quantity){
-                    throw new Error(`Insufficient inventory for ${product.name} (${product.size})`)
+                if (!inventoryItem || inventoryItem.quantity < item.quantity) {
+                    throw new Error(`Insufficient inventory for ${product.name} (${item.size})`);
                 }
-                inventoryItem.quantity -= item.quantity
-                await product.save()
+
+                const previousQuantity = inventoryItem.quantity;
+                inventoryItem.quantity -= item.quantity;
+                const newQuantity = inventoryItem.quantity;
+
+                await product.save();
+
+                if (newQuantity === 0 && previousQuantity > 0) {
+                    await createNotification({
+                        type: "OUT_OF_STOCK",
+                        title: "Product out of stock",
+                        message: `${product.name} in size ${item.size} is now out of stock.`,
+                        link: "/admin/allproducts",
+                        metadata: {
+                            productId: product._id,
+                            productName: product.name,
+                            size: item.size,
+                            quantity: newQuantity,
+                        },
+                    });
+                } else if (
+                    previousQuantity > LOW_STOCK_THRESHOLD &&
+                    newQuantity <= LOW_STOCK_THRESHOLD &&
+                    newQuantity > 0
+                ) {
+                    await createNotification({
+                        type: "LOW_STOCK",
+                        title: "Low stock alert",
+                        message: `${product.name} in size ${item.size} is low stock (${newQuantity} left).`,
+                        link: "/admin/allproducts",
+                        metadata: {
+                            productId: product._id,
+                            productName: product.name,
+                            size: item.size,
+                            quantity: newQuantity,
+                        },
+                    });
+                }
 
                 normalizedItems.push({
                     productId: product._id.toString(),
@@ -494,9 +548,10 @@ const handleStripeWebhook = async (req, res) => {
                     size: item.size,
                     quantity: item.quantity,
                     price: Number(item.price),
-                })
+                });
             }
-            await OrderModel.create({
+
+            const order = await OrderModel.create({
                 orderNumber: pendingCheckout.orderNumber,
                 user: pendingCheckout.user || null,
                 items: normalizedItems,
@@ -509,15 +564,28 @@ const handleStripeWebhook = async (req, res) => {
                 status: 'Order Placed',
             });
 
+            await createNotification({
+                type: "NEW_ORDER",
+                title: "New order received",
+                message: `Order #${order.orderNumber} was placed for ${order.items.length} items for $${order.total.toFixed(2)}.`,
+                link: "/admin/orders",
+                metadata: {
+                    orderId: order._id,
+                    orderNumber: order.orderNumber,
+                    total: order.total,
+                },
+            });
+
             pendingCheckout.status = 'completed';
-            await pendingCheckout.save()
+            await pendingCheckout.save();
         }
-        return res.status(200).json({received: true})
-    } catch(error){
+
+        return res.status(200).json({ received: true });
+    } catch (error) {
         console.log('Stripe webhook handling error:', error);
         return res.status(500).json({ received: false, message: error.message });
     }
-}
+};
 
 
 export { createOrder, getOrdersByUser, getOrderByOrderId, getAllOrders, updateOrderStatus,createStripeCheckoutSession, getStripeCheckoutSession, handleStripeWebhook  };

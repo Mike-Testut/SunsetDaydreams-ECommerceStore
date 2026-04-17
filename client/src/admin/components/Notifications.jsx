@@ -1,4 +1,6 @@
 import React from "react";
+import {Link} from "react-router-dom";
+import NotificationItem from "./NotificationItem.jsx";
 
 const Notifications = ({
                            notifications,
@@ -31,34 +33,16 @@ const Notifications = ({
             ) : (
                 <div className="space-y-3">
                     {notifications.map((notification) => (
-                        <div
+                        <NotificationItem
                             key={notification._id}
-                            className={`border rounded-lg p-4 ${
-                                notification.isRead ? "bg-white" : "bg-orange-50 border-orange-200"
-                            }`}
-                        >
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="font-medium">{notification.title}</p>
-                                    <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                                    <p className="text-xs text-gray-400 mt-2">
-                                        {new Date(notification.createdAt).toLocaleString()}
-                                    </p>
-                                </div>
-
-                                {!notification.isRead && (
-                                    <button
-                                        onClick={() => onMarkAsRead(notification._id)}
-                                        className="text-sm border px-3 py-1 rounded-md hover:bg-white"
-                                    >
-                                        Mark read
-                                    </button>
-                                )}
-                            </div>
-                        </div>
+                            notification={notification}
+                            onMarkAsRead={onMarkAsRead}
+                            compact
+                        />
                     ))}
                 </div>
             )}
+            <Link to="/admin/notifications" className="text-sm text-gray-500 underline hover:text-black">view all notifications</Link>
         </div>
     );
 };
