@@ -87,7 +87,16 @@ const registerUser = async (req, res) => {
             role});
         const user = await newUser.save()
         const token = createToken(user);
-        res.status(201).json({success: true, token})
+        res.status(201).json({
+            success: true,
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        })
     } catch (error) {
         console.log("something went wrong", error)
         return res.status(500).json({success: false, error: error.message});
