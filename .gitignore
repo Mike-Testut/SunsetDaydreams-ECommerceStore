@@ -1,6 +1,26 @@
-.env
-/.env
-/Users/michaeltestut/Documents/CodingPortfolioProjects/SunsetDaydreams/server/.env
+# dependencies
+node_modules/
 
+# env files
+.env
+.env.*
+!.env.example
+
+# OS files
 .DS_Store
-__MACOSX
+
+# IDE files
+.idea/
+.vscode/
+
+# misc
+__MACOSX/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# build
+dist/
+build/
