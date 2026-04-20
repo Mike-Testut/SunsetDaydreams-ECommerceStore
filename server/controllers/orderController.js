@@ -294,7 +294,7 @@ const updateOrderStatus = async (req, res) => {
 
 const createStripeCheckoutSession = async (req, res) => {
     try {
-        const { items, subtotal, shippingFee, tax, total } = req.body;
+        const { items, subtotal } = req.body;
         const orderNumber = generateOrderNumber();
 
         if (!items || !Array.isArray(items) || items.length === 0) {
@@ -374,18 +374,6 @@ const createStripeCheckoutSession = async (req, res) => {
             })
         }
 
-        if (Number(shippingFee) > 0) {
-            lineItems.push({
-                quantity: 1,
-                price_data: {
-                    currency: 'usd',
-                    unit_amount: Math.round(Number(shippingFee) * 100),
-                    product_data: {
-                        name: "Shipping"
-                    }
-                }
-            })
-        }
 
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
@@ -394,6 +382,36 @@ const createStripeCheckoutSession = async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ["US"],
             },
+            shipping_options:[
+                {
+                    shipping_rate_data:{
+                        type:'fixed_amount',
+                        fixed_amount:{
+                            amount: 599,
+                            currency:'usd'
+                        },
+                        display_name:"Standard Shipping",
+                        delivery_estimate: {
+                            minimum: { unit: 'business_day', value: 5 },
+                            maximum: { unit: 'business_day', value: 7 },
+                        },
+                    }
+                },
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: {
+                            amount: 1499,
+                            currency: 'usd',
+                        },
+                        display_name: 'Express Shipping',
+                        delivery_estimate: {
+                            minimum: { unit: 'business_day', value: 2 },
+                            maximum: { unit: 'business_day', value: 3 },
+                        },
+                    },
+                },
+            ],
             automatic_tax: {
                 enabled: true,
             },
@@ -414,9 +432,9 @@ const createStripeCheckoutSession = async (req, res) => {
             items: validatedItems,
             paymentMethod: 'stripe',
             subtotal: Number(subtotal),
-            shippingFee: Number(shippingFee) || 0,
-            tax: Number(tax) || 0,
-            total: Number(total),
+            shippingFee: 0,
+            tax: 0,
+            total: Number(subtotal),
             status: 'pending',
         })
 
@@ -599,10 +617,10 @@ const handleStripeWebhook = async (req, res) => {
                 items: normalizedItems,
                 shippingAddress,
                 paymentMethod: 'stripe',
-                subtotal: pendingCheckout.subtotal,
-                shippingFee: pendingCheckout.shippingFee,
-                tax: pendingCheckout.tax,
-                total: pendingCheckout.total,
+                subtotal: Number(session.amount_subtotal || 0) / 100,
+                shippingFee: Number(session.total_details?.amount_shipping || 0) / 100,
+                tax: Number(session.total_details?.amount_tax || 0) / 100,
+                total: Number(session.amount_total || 0) / 100,
                 status: 'Order Placed',
                 isPaid: true,
                 paidAt: new Date(),
