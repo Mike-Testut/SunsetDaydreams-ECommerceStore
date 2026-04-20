@@ -4,7 +4,7 @@ import { loadCartFromStorage } from '../cartStorage'
 const initialState = {
     products: [],
     currency: '$',
-    shippingFee: 10,
+    shippingFee: 5.99,
     search: '',
     showSearch: false,
     cartItems:loadCartFromStorage(),

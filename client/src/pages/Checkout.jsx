@@ -9,7 +9,6 @@ import {
 import { getCartData, getCartSubtotal, getCartTotal } from "../utils/cartHelpers.js";
 import { showToast } from "../redux/features/shopSlice.js";
 import Title from "../components/Title.jsx";
-import OrderSummary from "../components/OrderSummary.jsx";
 import { API_URL } from "../config/api.js";
 import { selectToken } from "../redux/features/authSlice.js";
 
@@ -21,7 +20,6 @@ const Checkout = () => {
 
     const products = useSelector((state) => state.shop.products)
     const cartItems = useSelector((state) => state.shop.cartItems)
-    const currency = useSelector((state) => state.shop.currency)
     const shippingFee = useSelector((state) => state.shop.shippingFee)
 
     const [loadingCheckout, setLoadingCheckout] = useState(true)
@@ -119,7 +117,7 @@ const Checkout = () => {
 
             <div className="flex flex-col lg:flex-row gap-10 items-start">
                 <div className="flex-1">
-                    <div className="border rounded-lg p-4 sm:p-6 min-h-[300px]">
+                    <div className="border rounded-lg p-4 sm:p-6 min-h-75">
                         <div className="text-xl sm:text-2xl mb-6">
                             <p>Shipping & Payment</p>
                         </div>
@@ -148,18 +146,6 @@ const Checkout = () => {
                             <p className="text-gray-600">Unable to load checkout.</p>
                         )}
                     </div>
-                </div>
-
-                <div className="w-full lg:w-105 mb-5">
-                    <OrderSummary
-                        currency={currency}
-                        subtotal={subtotal}
-                        shippingFee={shippingFee}
-                        total={total}
-                        title="Order Summary"
-                        items={cartDisplayData}
-                        showItems={true}
-                    />
                 </div>
             </div>
         </div>
