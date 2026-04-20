@@ -64,24 +64,26 @@ I built Sunset Daydreams to create a realistic full-stack e-commerce application
 
 ## Screenshots
 Home Page
-![HomePage.png](../Screenshots/HomePage.png)
+![HomePage.png](Screenshots/HomePage.png)
 
 Product page
-![ProductPage.png](../Screenshots/ProductPage.png)
+![ProductPage.png](Screenshots/ProductPage.png)
 
 Cart
-![Cart.png](../Screenshots/Cart.png)
+![Cart.png](Screenshots/Cart.png)
 
-- Checkout
+Checkout
+![Checkout1.png](Screenshots/Checkout1.png)
+![Checkout2.png](Screenshots/Checkout2.png)
 
 Admin dashboard
-![AdminDashboard.png](../Screenshots/AdminDashboard.png)
+![AdminDashboard.png](Screenshots/AdminDashboard.png)
 
 Admin products page
-![AdminProducts.png](../Screenshots/AdminProducts.png)
+![AdminProducts.png](Screenshots/AdminProducts.png)
 
 Admin orders page
-![AdminOrders.png](../Screenshots/AdminOrders.png)
+![AdminOrders.png](Screenshots/AdminOrders.png)
 
 Notifications page
-![AdminNotifications.png](../Screenshots/AdminNotifications.png)
+![AdminNotifications.png](Screenshots/AdminNotifications.png)
