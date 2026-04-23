@@ -166,7 +166,7 @@ const AddProduct = () => {
     }
 
     return (
-        <div className="w-full p-6">
+        <div className="w-full max-w-5xl">
             <div className="mb-6">
                 <h1 className="text-2xl font-medium">Add Product</h1>
                 <p className="text-sm text-gray-500 mt-1">

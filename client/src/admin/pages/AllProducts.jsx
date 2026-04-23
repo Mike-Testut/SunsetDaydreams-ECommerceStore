@@ -324,7 +324,7 @@ const AllProducts = () => {
                         return (
                             <div
                                 key={product._id}
-                                className="border rounded-lg p-4 bg-white shadow-sm flex flex-col md:flex-row md:items-center gap-4"
+                                className="border rounded-lg p-4 bg-white shadow-sm flex flex-col sm:flex-row gap-4"
                             >
                                 <img
                                     src={product.images?.[0]}
@@ -350,18 +350,18 @@ const AllProducts = () => {
                                     </p>
                                 </div>
 
-                                <div className="flex gap-3">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:self-start">
                                     <button
                                         type="button"
                                         onClick={() => openInventoryModal(product)}
-                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition"
+                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition w-full sm:w-auto"
                                     >
                                         Restock
                                     </button>
 
                                     <button
                                         type="button"
-                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer"
+                                        className="border px-4 py-2 rounded text-sm hover:bg-gray-100 transition cursor-pointer w-full sm:w-auto"
                                         onClick={() => navigate(`/admin/products/${product._id}`)}
                                     >
                                         Edit
@@ -371,7 +371,7 @@ const AllProducts = () => {
                                         type="button"
                                         onClick={() => handleDeleteProduct(product._id)}
                                         disabled={deletingProductID === product._id}
-                                        className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition cursor-pointer disabled:opacity-50"
+                                        className="border border-red-500 text-red-500 px-4 py-2 rounded text-sm hover:bg-red-500 hover:text-white transition cursor-pointer disabled:opacity-50 w-full sm:w-auto"
                                     >
                                         {deletingProductID === product._id ? 'Deleting...' : 'Delete'}
                                     </button>
