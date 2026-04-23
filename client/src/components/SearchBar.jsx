@@ -58,7 +58,7 @@ const SearchBar = () => {
                 }}
             />
 
-            <div className="fixed top-[88px] left-0 right-0 z-50 px-4">
+            <div className="fixed top-22 left-0 right-0 z-50 px-4">
                 <div ref={searchWrapperRef} className="relative max-w-2xl mx-auto">
                     <form onSubmit={handleSubmit}>
                         <div className="flex items-center border border-gray-300 px-5 py-3 rounded-full bg-white shadow-lg">
@@ -108,7 +108,7 @@ const SearchBar = () => {
                                                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 transition text-left border-b last:border-b-0 cursor-pointer"
                                             >
                                                 <img
-                                                    src={item.image[0]}
+                                                    src={item.images[0]}
                                                     alt={item.name}
                                                     className="w-12 h-12 object-cover rounded"
                                                 />
@@ -117,7 +117,7 @@ const SearchBar = () => {
                                                         {item.name}
                                                     </p>
                                                     <p className="text-xs text-gray-500 capitalize">
-                                                        {item.category} • {item.subCategory}
+                                                        {item.category} • {item.subcategory}
                                                     </p>
                                                 </div>
                                             </button>

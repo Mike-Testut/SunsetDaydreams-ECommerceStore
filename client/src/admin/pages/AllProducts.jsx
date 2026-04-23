@@ -249,19 +249,19 @@ const AllProducts = () => {
     }
 
     return (
-        <div className="p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <h1 className="text-2xl font-medium">Products</h1>
+        <div className="w-full max-w-7xl">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5 sm:mb-6">
+                <h1 className="text-xl sm:text-2xl font-medium">Products</h1>
 
                 <Link
                     to="/admin/addproduct"
-                    className="border px-4 py-2 rounded text-sm hover:bg-black hover:text-white transition"
+                    className="border px-4 py-2 rounded text-sm hover:bg-black hover:text-white transition w-full sm:w-auto text-center"
                 >
                     Add Product
                 </Link>
             </div>
 
-            <div className="mb-6 flex flex-col lg:flex-row gap-4">
+            <div className="mb-5 sm:mb-6 flex flex-col xl:flex-row gap-3">
                 <input
                     type="text"
                     placeholder="Search by name, category, or subcategory"

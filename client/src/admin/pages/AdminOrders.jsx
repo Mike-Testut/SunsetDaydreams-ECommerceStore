@@ -51,30 +51,28 @@ const AdminOrders = () => {
     }, [searchTerm, statusFilter, resetPage])
 
     if (loading) {
-        return <div className="p-6">Loading orders...</div>
+        return <div className="p-4 sm:p-6">Loading orders...</div>
     }
 
     if (error) {
-        return <div className="p-6 text-red-500">{error}</div>
+        return <div className="p-4 sm:p-6 text-red-500">{error}</div>
     }
 
     return (
-        <div className="p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
-                <h1 className="text-2xl font-medium">Orders</h1>
+        <div className="w-full max-w-7xl">
+            <div className="flex flex-col gap-4 mb-5 sm:mb-6">
+                <h1 className="text-xl sm:text-2xl font-medium">Orders</h1>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                        type="text"
-                        placeholder="Search by order #, customer, or email"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border rounded px-3 py-2 text-sm w-full sm:w-80"
-                    />
-                </div>
+                <input
+                    type="text"
+                    placeholder="Search by order #, customer, or email"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border rounded px-3 py-2 text-sm w-full lg:w-96"
+                />
             </div>
 
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
                 <AdminStatsCards
                     summaryStats={summaryStats}
                     statusFilter={statusFilter}
@@ -83,11 +81,11 @@ const AdminOrders = () => {
             </div>
 
             {filteredOrders.length === 0 ? (
-                <div className="border rounded-lg p-6 bg-white text-gray-600">
+                <div className="border rounded-lg p-4 sm:p-6 bg-white text-gray-600">
                     No orders match your current search or filter.
                 </div>
             ) : (
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 sm:gap-6">
                     {paginatedItems.map((order) => (
                         <AdminOrderCard
                             key={order._id}

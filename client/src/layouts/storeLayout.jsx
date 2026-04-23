@@ -39,7 +39,7 @@ const StoreLayout = () => {
     }, [dispatch])
 
     return (
-        <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+        <div className="px-3 sm:px-5 md:px-10 lg:px-16 xl:px-24">
             <AuthWatcher />
             <ScrollToTop />
             <NavBar />

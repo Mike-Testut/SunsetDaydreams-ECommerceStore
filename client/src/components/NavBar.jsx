@@ -24,8 +24,7 @@ const NavBar = () => {
 
 
   return (
-      <div className="flex items-center justify-between py-5 font-medium border-b-2 bg-white">
-        <Link to="/">
+      <div className="flex items-center justify-between py-4 sm:py-5 font-medium border-b-2 bg-white">        <Link to="/">
           <img src={assets.Logo2} className="w-36" alt="Logo" />
         </Link>
 
@@ -56,8 +55,8 @@ const NavBar = () => {
           </NavLink>
         </ul>
 
-        <div className="flex items-center gap-6">
-          {isAuthenticated ? <p>Hi, {user.name.split(" ")[0]}!</p>:<></>}
+        <div className="flex items-center gap-4 sm:gap-6">
+          {isAuthenticated ? <p className="hidden md:block">Hi, {user.name.split(" ")[0]}!</p> : null}
           <img
               onClick={() => dispatch(toggleShowSearch())}
               src={assets.SearchIcon}

@@ -33,7 +33,7 @@ const FilterBox = ({subcategoryOptions =[]}) => {
 
     return (
         <div>
-            <div className="min-w-60">
+            <div className="w-full sm:min-w-60 sm:max-w-60">
                 <div className="flex items-center justify-between mb-4">
                 <p onClick={()=>setShowFilters(!showFilters)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>
                     FILTERS
@@ -49,8 +49,7 @@ const FilterBox = ({subcategoryOptions =[]}) => {
                     </button>
                 )}
                 </div>
-                <div className={`border border-gray-300 pl-5 py-3 my-5 ${showFilters ? ' ' : 'hidden'}`}>
-                    <div>
+                <div className={`border border-gray-300 px-4 py-3 my-4 ${showFilters ? '' : 'hidden'}`}>                    <div>
                         <p className="text-sm font-medium mb-3">Subcategory</p>
 
                         <div className="flex flex-col gap-2">

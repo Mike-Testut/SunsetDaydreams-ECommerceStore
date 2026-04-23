@@ -117,7 +117,7 @@ const Checkout = () => {
 
             <div className="flex flex-col lg:flex-row gap-10 items-start">
                 <div className="flex-1">
-                    <div className="border rounded-lg p-4 sm:p-6 min-h-75">
+                    <div className="border rounded-lg p-4 sm:p-6 min-h-75 mb-10">
                         <div className="text-xl sm:text-2xl mb-6">
                             <p>Shipping & Payment</p>
                         </div>

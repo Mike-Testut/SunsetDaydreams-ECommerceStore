@@ -14,7 +14,7 @@ const OrderSummary = ({
                           children,
                       }) => {
     return (
-        <div className="border p-6 rounded-lg">
+        <div className="border p-4 sm:p-6 rounded-lg">
             <div className="text-lg mb-6 text-center underline">
                 <p>{title}</p>
             </div>
@@ -24,7 +24,7 @@ const OrderSummary = ({
                     {items.map((item) => (
                         <div
                             key={`${item.productId}-${item.size}`}
-                            className="flex gap-4 border-b pb-4"
+                            className="flex gap-3 sm:gap-4 border-b pb-4"
                         >
                             <img
                                 src={item.product.images[0]}

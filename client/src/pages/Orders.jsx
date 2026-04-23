@@ -137,7 +137,7 @@ const Orders = () => {
                             {order.items.map((item, index) => (
                                 <div
                                     key={`${order._id}-${index}`}
-                                    className="flex gap-4 border-t pt-4"
+                                    className="flex flex-col sm:flex-row gap-4 border-t pt-4"
                                 >
                                     <img
                                         src={item.image}

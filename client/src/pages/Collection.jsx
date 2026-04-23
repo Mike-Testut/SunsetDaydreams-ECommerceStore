@@ -63,7 +63,7 @@ const Collection = () => {
             />
 
             <div className="flex-1">
-                <div className="flex justify-between text-base sm:text-2xl mb-4">
+                <div className="flex flex-col gap-3 sm:flex-row items-center sm:justify-between text-base sm:text-2xl mb-4">
                     <Title
                         text2={
                             category
@@ -75,7 +75,7 @@ const Collection = () => {
                     <select
                         value={sortType}
                         onChange={(e) => setSortType(e.target.value)}
-                        className="border-2 border-gray-300 text-sm px-2"
+                        className="border-2 border-gray-300 text-sm px-3 py-2 w-full sm:w-auto"
                     >
                         <option value="newest">Sort by: Newest</option>
                         <option value="oldest">Sort by: Oldest</option>

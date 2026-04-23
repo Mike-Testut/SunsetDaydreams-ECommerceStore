@@ -115,9 +115,9 @@ const AdminDashboard = () => {
 
 
     return (
-        <div className="mx-5">
-            <div className="mb-6">
-                <h1 className="text-2xl font-medium">Dashboard</h1>
+        <div className="w-full max-w-7xl">
+            <div className="mb-5 sm:mb-6">
+                <h1 className="text-xl sm:text-2xl font-medium">Dashboard</h1>
             </div>
             <Notifications
                 notifications={notifications}

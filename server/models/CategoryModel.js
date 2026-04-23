@@ -20,7 +20,6 @@ const categorySchema = new mongoose.Schema(
     { timestamps: true }
 )
 
-categorySchema.index({ name: 1 }, { unique: true })
 
 const Category = mongoose.models.Category || mongoose.model('Category', categorySchema)
 

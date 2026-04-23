@@ -61,7 +61,7 @@ const Product = () => {
 
     return (
         <div className="pt-10 transition-opacity ease-in duration-500 opacity-100">
-            <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
+            <div className="flex flex-col sm:flex-row gap-8 sm:gap-12">
                 {/* Product Images */}
                 <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
                     <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full">
@@ -83,16 +83,9 @@ const Product = () => {
 
                 {/* Product Info */}
                 <div className="flex-1">
-                    <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
-
-                    <p className="mt-5 text-3xl font-medium">
-                        {currency}{productData.price}
-                    </p>
-
-                    <p className="mt-5 text-gray-500 md:w-4/5">
-                        {productData.description}
-                    </p>
-
+                    <h1 className="font-medium text-xl sm:text-2xl mt-2">{productData.name}</h1>
+                    <p className="mt-4 text-2xl sm:text-3xl font-medium">{currency}{productData.price}</p>
+                    <p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
                     <div className="flex flex-col gap-4 my-8">
                         <p>Select Size</p>
 
@@ -137,7 +130,7 @@ const Product = () => {
 
                     <button
                         onClick={handleAddToCart}
-                        className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 cursor-pointer"
+                        className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 cursor-pointer w-full sm:w-auto"
                     >
                         ADD TO CART
                     </button>
@@ -154,7 +147,7 @@ const Product = () => {
 
             {/* Description & Review Section */}
             <div className="mt-20">
-                <div className="flex">
+                <div className="flex flex-wrap">
                     <b className="border px-5 py-3 text-sm">Description</b>
                     <p className="border px-5 py-3 text-sm">Reviews (122)</p>
                 </div>
