@@ -1,4 +1,4 @@
-import Category from '../models/categoryModel.js'
+import Category from '../models/CategoryModel.js'
 
 const normalizeValue = (value = '') => {
     return value.trim().replace(/\s+/g, ' ')
