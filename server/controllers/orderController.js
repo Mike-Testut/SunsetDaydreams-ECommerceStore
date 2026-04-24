@@ -377,7 +377,7 @@ const createStripeCheckoutSession = async (req, res) => {
 
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
-            ui_mode: 'embedded_page',
+            ui_mode: 'embedded',
             line_items: lineItems,
             shipping_address_collection: {
                 allowed_countries: ["US"],
