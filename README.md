@@ -3,8 +3,8 @@
 Sunset Daydreams is a full-stack e-commerce web application built for a coastal lifestyle clothing brand. It includes a customer storefront, secure authentication, Stripe checkout, order management, inventory tracking, and an admin dashboard for managing products and store activity.
 
 ## Live Demo
-- Frontend: [Add deployed frontend URL]
-- Backend API: [Add deployed backend URL]
+- Frontend: https://sunset-daydreams.vercel.app/
+- Backend API: https://sunsetdaydreams-ecommercestore.onrender.com/
 
 ## Demo Accounts
 - Admin - test admin email: admin@test.com / test password: password
@@ -24,6 +24,7 @@ I built Sunset Daydreams to create a realistic full-stack e-commerce application
 - Embedded Stripe checkout
 - View order confirmation and order history
 - Register, log in, and manage account access
+- Optimized UI for desktop and mobile
 
 ### Admin Features
 - Add, edit, and delete products
@@ -65,12 +66,15 @@ I built Sunset Daydreams to create a realistic full-stack e-commerce application
 ## Screenshots
 Home Page
 ![HomePage.png](screenshots/HomePage.png)
+![Home-Mobile.png](screenshots/Home-Mobile.png)
 
 Product page
 ![ProductPage.png](screenshots/ProductPage.png)
+![Product-Mobile.png](screenshots/Product-Mobile.png)
 
 Cart
 ![Cart.png](screenshots/Cart.png)
+![Cart-Mobile.png](screenshots/Cart-Mobile.png)
 
 Checkout
 ![Checkout1.png](screenshots/Checkout1.png)
@@ -78,12 +82,18 @@ Checkout
 
 Admin dashboard
 ![AdminDashboard.png](screenshots/AdminDashboard.png)
+![AdminDashboard-Mobile.png](screenshots/AdminDashboard-Mobile.png)
 
 Admin products page
 ![AdminProducts.png](screenshots/AdminProducts.png)
+![AdminProducts-Mobile.png](screenshots/AdminProducts-Mobile.png)
 
 Admin orders page
 ![AdminOrders.png](screenshots/AdminOrders.png)
+![AdminOrders-Mobile.png](screenshots/AdminOrders-Mobile.png)
 
 Notifications page
 ![AdminNotifications.png](screenshots/AdminNotifications.png)
+
+Search function
+![Search.png](screenshots/Search.png)
