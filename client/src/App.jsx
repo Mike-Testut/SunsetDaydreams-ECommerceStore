@@ -23,6 +23,7 @@ import Customers from "./admin/pages/Customers.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import EditProduct from "./admin/pages/EditProduct.jsx";
 import NotificationsPage from "./admin/pages/NotificationsPage.jsx";
+import ComingSoon from "./pages/ComingSoon.jsx";
 
 
 const App = () => {
@@ -51,6 +52,22 @@ const App = () => {
                 <Route path="/account/orders" element={
                     <ProtectedRoute>
                         <Orders/>
+                    </ProtectedRoute>
+                }/>
+                    {/*In Progress Routes*/}
+                <Route path="/account/wishlist" element={
+                    <ProtectedRoute>
+                        <ComingSoon/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/account/rewards" element={
+                    <ProtectedRoute>
+                        <ComingSoon/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/account/settings" element={
+                    <ProtectedRoute>
+                        <ComingSoon/>
                     </ProtectedRoute>
                 }/>
 

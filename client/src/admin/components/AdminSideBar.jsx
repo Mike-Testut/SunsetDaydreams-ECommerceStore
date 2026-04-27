@@ -5,7 +5,7 @@ const navItems = [
     { to: "/admin/orders", label: "Orders", end: true },
     { to: "/admin/products", label: "Products" },
     { to: "/admin/addproduct", label: "Add Product" },
-    { to: "/admin/customers", label: "Customers" },
+    // { to: "/admin/customers", label: "Customers" },
     { to: "/admin/notifications", label: "Notifications" },
 ];
 
