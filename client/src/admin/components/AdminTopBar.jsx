@@ -1,6 +1,5 @@
 import React from "react";
 import { adminAssets } from "../assets/adminAssets.js";
-import { assets } from "../../assets/assets.js";
 import { useSelector } from "react-redux";
 import { NavLink, Link } from "react-router-dom";
 import { selectCurrentUser } from "../../redux/features/authSlice.js";
@@ -46,11 +45,6 @@ const AdminTopBar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
                     <p className="hidden sm:block text-sm text-gray-700 truncate">
                         Hi, {user?.name || "Admin"}
                     </p>
-                    <img
-                        src={assets.ProfileIcon}
-                        alt="profile"
-                        className="w-6 h-6 sm:w-7 sm:h-7 shrink-0"
-                    />
                 </div>
             </div>
 
