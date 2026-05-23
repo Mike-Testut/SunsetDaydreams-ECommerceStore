@@ -9,6 +9,7 @@ import orderRouter from "./routes/orderRoute.js";
 import categoryRouter from "./routes/categoryRoute.js";
 import {handleStripeWebhook} from "./controllers/orderController.js";
 import notificationRouter from "./routes/notificationRoute.js";
+import rateLimiter from "./middleware/rateLimiter.js";
 
 
 //App Config
@@ -37,6 +38,8 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+app.use(rateLimiter)
 
 //API endpoints
 app.use('/api/user/', userRouter);
