@@ -39,7 +39,7 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(rateLimiter)
+// app.use(rateLimiter)
 
 //API endpoints
 app.use('/api/user/', userRouter);
