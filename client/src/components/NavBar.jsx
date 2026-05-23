@@ -49,10 +49,10 @@ const NavBar = () => {
             <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
 
-          <NavLink to="/sale" className="flex flex-col items-center gap-1">
-            <p className="hover:text-black">Sale</p>
-            <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
+          {/*<NavLink to="/sale" className="flex flex-col items-center gap-1">*/}
+          {/*  <p className="hover:text-black">Sale</p>*/}
+          {/*  <hr className="w-3/4 border-none h-[1.5px] bg-gray-700 hidden" />*/}
+          {/*</NavLink>*/}
         </ul>
 
         <div className="flex items-center gap-4 sm:gap-6">
