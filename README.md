@@ -10,6 +10,11 @@ Sunset Daydreams is a full-stack e-commerce web application built for a coastal 
 - Admin - test admin email: admin@test.com / test password: password
 - Customer - test customer email: user@test.com  / test password: password
 
+To test checkout use:  
+Card #: 4242 4242 4242 4242  
+Exp: 12/29  
+CVC:123 
+
 ## Why I Built This
 
 I built Sunset Daydreams to create a realistic full-stack e-commerce application that demonstrates production-style architecture, payment processing, protected admin tooling, and a polished user experience beyond a basic CRUD app.
