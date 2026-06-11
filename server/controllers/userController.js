@@ -2,6 +2,8 @@ import UserModel from "../models/UserModel.js";
 import validator from "validator"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../utils/sendEmail.js";
+import { welcomeEmailTemplate } from "../utils/emailTemplates.js";
 
 const createToken = (user)=>{
     return jwt.sign(
@@ -87,7 +89,18 @@ const registerUser = async (req, res) => {
             role});
         const user = await newUser.save()
         const token = createToken(user);
-        res.status(201).json({
+
+        try {
+            await sendEmail({
+                to: user.email,
+                subject: "Welcome to Sunset Daydreams",
+                html: welcomeEmailTemplate(user.name),
+            });
+        } catch (error) {
+            console.error("Welcome email failed:", error.message);
+        }
+
+        return res.status(201).json({
             success: true,
             token,
             user: {
