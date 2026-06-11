@@ -8,7 +8,9 @@ Sunset Daydreams is a full-stack e-commerce web application built for a coastal 
 
 ## Demo Accounts
 - Admin - test admin email: admin@test.com / test password: password
-- Customer - test customer email: user@test.com  / test password: password
+- Customer - Create your own account!  
+  -- OR -- 
+- test customer email: user@test.com  / test password: password
 
 To test checkout use:  
 Card #: 4242 4242 4242 4242  
