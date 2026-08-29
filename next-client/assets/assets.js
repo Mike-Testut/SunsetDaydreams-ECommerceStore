@@ -1,0 +1,49 @@
+import SearchIcon from "./SearchIcon.png"
+import BananaLeafBG from "./BananaLeafBG.png"
+import Logo from "./Logo.png"
+import Logo2 from "./Logo2.png"
+import LogoBlackOutline from "./LogoBlackOutline.png"
+import PageBG from "./PageBG.png"
+import CartIcon from "./CartIcon.png"
+import SDLogo from "./SDLogo.png"
+import InstaLogo from "./InstaLogo.png"
+import ProfileIcon from "./ProfileIcon.png"
+import MenuIcon from "./MenuIcon.png"
+import BackIcon from "./BackIcon.jpg"
+import HeroImage from "./HeroImage.png"
+import dropdown_icon from "./dropdown_icon.png"
+import cross_icon from "./cross_icon.png"
+import favicon from "./favicon.png"
+import stripe_logo from "./stripe_logo.png"
+import paypal_logo from "./paypal_logo.png"
+import loyalty_bday from "./loyalty-bday.png"
+import loyalty_points from "./loyalty-points.png"
+import loyalty_shipping from "./loyalty-shipping.png"
+
+
+
+
+export const assets = {
+    SearchIcon,
+    BananaLeafBG,
+    Logo,
+    Logo2,
+    LogoBlackOutline,
+    PageBG,
+    CartIcon,
+    SDLogo,
+    InstaLogo,
+    ProfileIcon,
+    MenuIcon,
+    BackIcon,
+    HeroImage,
+    dropdown_icon,
+    cross_icon,
+    favicon,
+    stripe_logo,
+    paypal_logo,
+    loyalty_bday,
+    loyalty_points,
+    loyalty_shipping,
+
+}
