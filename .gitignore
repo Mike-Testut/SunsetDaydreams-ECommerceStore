@@ -5,6 +5,7 @@ node_modules/
 .env
 .env.*
 !.env.example
+.venv/
 
 # OS files
 .DS_Store
